@@ -30,12 +30,19 @@ const envSchema = z
       .default('4')
       .transform(Number),
   })
-  .transform((env) => ({
-    API_URL: `${env.PROTOCOL}://${env.HOST}:${env.PORT}${[env.API_PREFIX, env.API_VERSION].filter(Boolean).join('/')}`,
-    IS_PRODUCTION: env.NODE_ENV === 'production',
-    IS_DEVELOPMENT: env.NODE_ENV === 'development',
-    ...env,
-  }));
+  .transform((env) => {
+    const API_BASE = [env.API_PREFIX, env.API_VERSION]
+      .filter(Boolean)
+      .join('/');
+    return {
+      API_BASE: API_BASE ? `/${API_BASE}` : '',
+      DB_URI: `${env.DB_DIALECT}://${env.DB_USER}:${env.DB_PASS}@${env.DB_HOST}:${env.DB_PORT}/${env.DB_NAME}`,
+      API_URL: `${env.PROTOCOL}://${env.HOST}:${env.PORT}/${[env.API_PREFIX, env.API_VERSION].filter(Boolean).join('/')}`,
+      IS_PRODUCTION: env.NODE_ENV === 'production',
+      IS_DEVELOPMENT: env.NODE_ENV === 'development',
+      ...env,
+    };
+  });
 
 const envConfig = envSchema.parse(process.env);
 
