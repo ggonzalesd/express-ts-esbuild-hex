@@ -1,0 +1,14 @@
+services:
+  esbuild-ts-psql:
+    image: postgres:16
+    container_name: esbuild-ts-psql
+    environment:
+      POSTGRES_USER: esbuild_user
+      POSTGRES_PASSWORD: esbuild_password
+      POSTGRES_DB: esbuild_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - esbuild-ts-psql-data:/var/lib/postgresql/data
+volumes:
+  esbuild-ts-psql-data:
