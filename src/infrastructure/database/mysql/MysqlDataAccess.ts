@@ -12,11 +12,13 @@ import { PREFIX_ACCESS_DATA } from '@/constants/dependencies.enum';
 import { DEP_MYSQL_POOL } from './Mysql.config';
 
 import envConfig from '@/config/env.config';
+import { MysqlUserDB } from './MysqlUser.database';
 
 @injectable()
 export class MysqlDataAccess implements DataAccess {
   constructor(
     @inject(DEP_MYSQL_POOL) public pool: Pool,
+    @inject(MysqlUserDB) public user: MysqlUserDB,
     @inject(MysqlProductDB) public product: MysqlProductDB,
     @inject(MysqlTransaction)
     public transaction: MysqlTransaction,
