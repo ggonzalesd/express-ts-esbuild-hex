@@ -10,17 +10,18 @@ export class MysqlTransaction implements TransactionManager<'mysql'> {
   constructor(@inject(DEP_MYSQL_POOL) private client: Pool) {}
 
   async run<T>(fn: (ctx: PoolConnection) => Promise<T>): Promise<T> {
-    const connection = await this.client.getConnection();
+    let connection: PoolConnection | null = null;
     try {
-      await this.client.beginTransaction();
+      connection = await this.client.getConnection();
+      await connection.beginTransaction();
       const result = await fn(connection);
-      await this.client.commit();
+      await connection.commit();
       return result;
     } catch (error) {
-      await this.client.rollback();
+      await connection?.rollback();
       throw error;
     } finally {
-      connection.release();
+      connection?.release();
     }
   }
 }

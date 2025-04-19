@@ -10,17 +10,18 @@ export class PsqlTransaction implements TransactionManager<'pg'> {
   constructor(@inject(DEP_PG_POOL) private client: Pool) {}
 
   async run<T>(fn: (ctx: PoolClient) => Promise<T>): Promise<T> {
-    const connection = await this.client.connect();
+    let connection: PoolClient | null = null;
     try {
-      await this.client.query('BEGIN');
+      connection = await this.client.connect();
+      await connection.query('BEGIN');
       const result = await fn(connection);
-      await this.client.query('COMMIT');
+      await connection.query('COMMIT');
       return result;
     } catch (error) {
-      await this.client.query('ROLLBACK');
+      await connection?.query('ROLLBACK');
       throw error;
     } finally {
-      connection.release();
+      connection?.release();
     }
   }
 }
