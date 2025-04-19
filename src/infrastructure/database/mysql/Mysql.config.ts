@@ -1,24 +1,22 @@
-import { Pool, createPool } from 'mysql2/promise';
+import { container } from 'tsyringe';
+import { createPool } from 'mysql2/promise';
 
-import { type DataAccess } from '@/domain/repositories/DataAccess';
+import { PREFIX_POOL } from '@/constants/dependencies.enum';
+import { dependecyName } from '@/tools/dependencies.tool';
 
 import envConfig from '@/config/env.config';
-import { MysqlProductDatabase } from './MysqlProduct.database';
 
-export class MysqlDataAccess implements DataAccess {
-  private pool: Pool;
-  public product: MysqlProductDatabase;
+const mysqlPool = createPool({
+  host: envConfig.DB_HOST,
+  port: envConfig.DB_PORT,
+  user: envConfig.DB_USER,
+  password: envConfig.DB_PASS,
+  database: envConfig.DB_NAME,
+  connectionLimit: envConfig.DB_CONNECTION_POOL_MAX,
+});
 
-  constructor() {
-    this.pool = createPool({
-      host: envConfig.DB_HOST,
-      port: envConfig.DB_PORT,
-      user: envConfig.DB_USER,
-      password: envConfig.DB_PASS,
-      database: envConfig.DB_NAME,
-      connectionLimit: envConfig.DB_CONNECTION_POOL_MAX,
-    });
+const dbDialect: typeof envConfig.DB_DIALECT = 'mysql';
 
-    this.product = new MysqlProductDatabase(this.pool);
-  }
-}
+export const DEP_MYSQL_POOL = dependecyName(PREFIX_POOL, dbDialect);
+
+container.register(DEP_MYSQL_POOL, { useValue: mysqlPool });

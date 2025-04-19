@@ -1,8 +1,13 @@
-import { Pool, type PoolConnection } from 'mysql2/promise';
+import { inject, injectable } from 'tsyringe';
+import { type Pool, type PoolConnection } from 'mysql2/promise';
+
 import { type TransactionManager } from '@/domain/repositories/TransactionManager';
 
-export class MysqlTransactionManager implements TransactionManager<'mysql'> {
-  constructor(private client: Pool) {}
+import { DEP_MYSQL_POOL } from './Mysql.config';
+
+@injectable()
+export class MysqlTransaction implements TransactionManager<'mysql'> {
+  constructor(@inject(DEP_MYSQL_POOL) private client: Pool) {}
 
   async run<T>(fn: (ctx: PoolConnection) => Promise<T>): Promise<T> {
     const connection = await this.client.getConnection();
