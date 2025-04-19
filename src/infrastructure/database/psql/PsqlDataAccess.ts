@@ -3,6 +3,7 @@ import { Pool } from 'pg';
 
 import { type DataAccess } from '@/domain/repositories/DataAccess';
 
+import { PsqlUserDB } from './PsqlUser.database';
 import { PsqlProductDB } from './PsqlProduct.database';
 import { PsqlTransaction } from './PsqlTransaction';
 
@@ -16,6 +17,7 @@ import envConfig from '@/config/env.config';
 export class PsqlDataAccess implements DataAccess {
   constructor(
     @inject(DEP_PG_POOL) public pool: Pool,
+    @inject(PsqlUserDB) public user: PsqlUserDB,
     @inject(PsqlProductDB) public product: PsqlProductDB,
     @inject(PsqlTransaction) public transaction: PsqlTransaction,
   ) {}
