@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "dev": "ts-node-dev -r tsconfig-paths/register src/index.ts",
+    "dev": "NODE_ENV=development ts-node-dev -r tsconfig-paths/register src/index.ts",
+    "test": "NODE_ENV=test jest --detectOpenHandles --forceExit",
     "start": "node dist/index.js",
     "build": "node esbuild.config.mjs",
     "eslint": "eslint .",
@@ -11,7 +12,7 @@
     "migrate:executed": "node dist/umzug.client.js executed",
     "migrate:help": "node dist/umzug.client.js",
     "migrate:create": "node dist/umzug.client.js create",
-    "migrate:build": "ENTRY=./src/database/umzug.client.ts MINIFY=true node esbuild.config.mjs"
+    "migrate:build": "ENTRY=./src/database/umzug.client.ts node esbuild.config.mjs"
   },
   "license": "ISC",
   "packageManager": "pnpm@10.8.0",

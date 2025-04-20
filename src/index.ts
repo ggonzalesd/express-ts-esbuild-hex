@@ -1,8 +1,16 @@
 /* eslint-disable no-console */
+import 'reflect-metadata';
+import { container } from 'tsyringe';
 import { createServer } from 'http';
-import envConfig from '@/config/env.config';
+
+import { DEP_CONFIG_ENV } from '@/constants/dependencies.enum';
+import { type ConfigService } from '@/application/ports/ConfigServide';
+
+import '@/infrastructure/environment/dotenv.config';
 
 import { app } from '@/app';
+
+const envConfig = container.resolve<ConfigService>(DEP_CONFIG_ENV);
 
 const { PORT, NODE_ENV, API_URL } = envConfig;
 

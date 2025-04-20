@@ -1,19 +1,18 @@
 import { inject, injectable } from 'tsyringe';
 import { type Pool } from 'pg';
 
-import { type DataAccess } from '@/domain/repositories/DataAccess';
-
-import { PsqlUserDB } from './PsqlUser.database';
-import { PsqlProductDB } from './PsqlProduct.database';
-import { PsqlTransaction } from './PsqlTransaction';
-
 import { dependecyName } from '@/tools/dependencies.tool';
 import {
   ADAPTER_DATABASE,
   PREFIX_ACCESS_DATA,
 } from '@/constants/dependencies.enum';
 
+import { type DataAccess } from '@/domain/repositories/DataAccess';
+
 import { DEP_PG_POOL } from './Psql.config';
+import { PsqlTransaction } from './PsqlTransaction';
+import { PsqlUserDB } from './PsqlUser.database';
+import { PsqlProductDB } from './PsqlProduct.database';
 
 const database: typeof ADAPTER_DATABASE = 'postgres';
 

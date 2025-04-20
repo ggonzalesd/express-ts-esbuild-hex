@@ -1,4 +1,10 @@
 dist/
 node_modules/
+
 .env
+.env.production
+.env.development
+.env.test
+.env.local
+
 notes.txt

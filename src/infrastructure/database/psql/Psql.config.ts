@@ -2,9 +2,15 @@ import { container } from 'tsyringe';
 import { Pool } from 'pg';
 
 import { dependecyName } from '@/tools/dependencies.tool';
-import { ADAPTER_DATABASE, PREFIX_POOL } from '@/constants/dependencies.enum';
+import {
+  ADAPTER_DATABASE,
+  DEP_CONFIG_ENV,
+  PREFIX_POOL,
+} from '@/constants/dependencies.enum';
 
-import envConfig from '@/config/env.config';
+import { type ConfigService } from '@/application/ports/ConfigServide';
+
+const envConfig = container.resolve<ConfigService>(DEP_CONFIG_ENV);
 
 const psqlPool = new Pool({
   host: envConfig.DB_HOST,

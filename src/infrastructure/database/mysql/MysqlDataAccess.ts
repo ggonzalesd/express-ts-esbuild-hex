@@ -1,19 +1,19 @@
 import { container, inject, injectable } from 'tsyringe';
 import { type Pool } from 'mysql2/promise';
 
-import { type DataAccess } from '@/domain/repositories/DataAccess';
-
-import { MysqlUserDB } from './MysqlUser.database';
-import { MysqlProductDB } from './MysqlProduct.database';
-import { MysqlTransaction } from './MysqlTransaction';
-
 import { dependecyName } from '@/tools/dependencies.tool';
+
 import {
   ADAPTER_DATABASE,
   PREFIX_ACCESS_DATA,
 } from '@/constants/dependencies.enum';
 
+import { type DataAccess } from '@/domain/repositories/DataAccess';
+
 import { DEP_MYSQL_POOL } from './Mysql.config';
+import { MysqlTransaction } from './MysqlTransaction';
+import { MysqlUserDB } from './MysqlUser.database';
+import { MysqlProductDB } from './MysqlProduct.database';
 
 @injectable()
 export class MysqlDataAccess implements DataAccess {

@@ -1,10 +1,36 @@
-import dotenv from 'dotenv';
+import path from 'node:path';
+import { container } from 'tsyringe';
 import { z } from 'zod';
-dotenv.config();
+import dotenv from 'dotenv';
+
+import { ConfigService } from '@/application/ports/ConfigServide';
+import { DEP_CONFIG_ENV } from '@/constants/dependencies.enum';
+
+const filesnames = {
+  development: '.env',
+  production: '.env.production',
+  test: '.env.test',
+};
+
+const filename =
+  filesnames[process.env.NODE_ENV as keyof typeof filesnames] ||
+  filesnames.development;
+
+const result = dotenv.config({
+  path: path.join(process.cwd(), filename),
+});
+
+if (result.error) {
+  throw new Error(
+    `Failed to load environment variables from ${filename}: ${result.error.message}`,
+  );
+}
 
 const envSchema = z
   .object({
-    NODE_ENV: z.enum(['development', 'production']).default('development'),
+    NODE_ENV: z
+      .enum(['development', 'production', 'test'])
+      .default('development'),
 
     PROTOCOL: z.enum(['http', 'https']).default('http'),
     HOST: z.string().default('localhost'),
@@ -47,6 +73,8 @@ const envSchema = z
     };
   });
 
-const envConfig = envSchema.parse(process.env);
+const envConfig: ConfigService = envSchema.parse(process.env);
 
-export default envConfig;
+container.register<ConfigService>(DEP_CONFIG_ENV, {
+  useValue: envConfig,
+});

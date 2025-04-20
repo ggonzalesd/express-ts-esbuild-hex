@@ -4,16 +4,21 @@ import path from 'node:path';
 import fs from 'node:fs';
 
 import { Umzug } from 'umzug';
+import { container } from 'tsyringe';
+
+import { DEP_CONFIG_ENV } from '@/constants/dependencies.enum';
 
 import { type GenericPool } from '@/domain/repositories/DataAccess';
+import { type ConfigService } from '@/application/ports/ConfigServide';
 
+import '@/infrastructure/environment/dotenv.config';
 import '@/infrastructure/database/psql/PsqlDataAccess';
 import '@/infrastructure/database/mysql/MysqlDataAccess';
 
 import { getContext, getStorage } from './lib/config.util';
 import { run } from './lib/client.util';
 
-import envConfig from '@/config/env.config';
+const envConfig = container.resolve<ConfigService>(DEP_CONFIG_ENV);
 
 async function start() {
   // #region Get context from the container
