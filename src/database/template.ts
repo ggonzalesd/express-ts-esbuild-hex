@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { type MigrationFn } from 'umzug';
 import { type GenericPool } from '@/domain/repositories/DataAccess';
 

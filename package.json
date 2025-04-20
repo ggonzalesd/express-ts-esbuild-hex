@@ -7,10 +7,11 @@
     "migrate": "ts-node -r tsconfig-paths/register src/database/umzug.client.ts migrate",
     "migrate:undo": "ts-node -r tsconfig-paths/register src/database/umzug.client.ts rollback",
     "migrate:destroy": "ts-node -r tsconfig-paths/register src/database/umzug.client.ts destroy",
-    "migrate:pending": "ts-node -r tsconfig-paths/register src/database/umzug.client.ts pending",
-    "migrate:executed": "ts-node -r tsconfig-paths/register src/database/umzug.client.ts executed",
-    "migrate:help": "ts-node -r tsconfig-paths/register src/database/umzug.client.ts",
-    "migrate:create": "ts-node -r tsconfig-paths/register src/database/umzug.client.ts create"
+    "migrate:pending": "node dist/umzug.client.js pending",
+    "migrate:executed": "node dist/umzug.client.js executed",
+    "migrate:help": "node dist/umzug.client.js",
+    "migrate:create": "node dist/umzug.client.js create",
+    "migrate:build": "ENTRY=./src/database/umzug.client.ts MINIFY=true node esbuild.config.mjs"
   },
   "license": "ISC",
   "packageManager": "pnpm@10.8.0",

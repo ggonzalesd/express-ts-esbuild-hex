@@ -1,7 +1,7 @@
 import { container } from 'tsyringe';
 import { createPool } from 'mysql2/promise';
 
-import { PREFIX_POOL } from '@/constants/dependencies.enum';
+import { ADAPTER_DATABASE, PREFIX_POOL } from '@/constants/dependencies.enum';
 import { dependecyName } from '@/tools/dependencies.tool';
 
 import envConfig from '@/config/env.config';
@@ -15,8 +15,8 @@ const mysqlPool = createPool({
   connectionLimit: envConfig.DB_CONNECTION_POOL_MAX,
 });
 
-const dbDialect: typeof envConfig.DB_DIALECT = 'mysql';
+const database: typeof ADAPTER_DATABASE = 'mysql';
 
-export const DEP_MYSQL_POOL = dependecyName(PREFIX_POOL, dbDialect);
+export const DEP_MYSQL_POOL = dependecyName(PREFIX_POOL, database);
 
 container.register(DEP_MYSQL_POOL, { useValue: mysqlPool });

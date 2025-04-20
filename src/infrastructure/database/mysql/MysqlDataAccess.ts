@@ -3,16 +3,17 @@ import { type Pool } from 'mysql2/promise';
 
 import { type DataAccess } from '@/domain/repositories/DataAccess';
 
+import { MysqlUserDB } from './MysqlUser.database';
 import { MysqlProductDB } from './MysqlProduct.database';
 import { MysqlTransaction } from './MysqlTransaction';
 
 import { dependecyName } from '@/tools/dependencies.tool';
-import { PREFIX_ACCESS_DATA } from '@/constants/dependencies.enum';
+import {
+  ADAPTER_DATABASE,
+  PREFIX_ACCESS_DATA,
+} from '@/constants/dependencies.enum';
 
 import { DEP_MYSQL_POOL } from './Mysql.config';
-
-import envConfig from '@/config/env.config';
-import { MysqlUserDB } from './MysqlUser.database';
 
 @injectable()
 export class MysqlDataAccess implements DataAccess {
@@ -25,11 +26,11 @@ export class MysqlDataAccess implements DataAccess {
   ) {}
 }
 
-const dbDialect: typeof envConfig.DB_DIALECT = 'mysql';
+const database: typeof ADAPTER_DATABASE = 'mysql';
 
 export const DEP_MYSQL_DATA_ACCESS = dependecyName(
   PREFIX_ACCESS_DATA,
-  dbDialect,
+  database,
 );
 
 container.register<MysqlDataAccess>(DEP_MYSQL_DATA_ACCESS, {

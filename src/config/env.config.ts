@@ -29,6 +29,9 @@ const envSchema = z
       .regex(/^\d+$/)
       .default('4')
       .transform(Number),
+
+    MIGRATE_TEMPLATE: z.string().default('template.ts'),
+    MIGRATE_FOLDER: z.string().default('migrations'),
   })
   .transform((env) => {
     const API_BASE = [env.API_PREFIX, env.API_VERSION]

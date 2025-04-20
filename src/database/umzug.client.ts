@@ -5,12 +5,15 @@ import fs from 'node:fs';
 
 import { Umzug } from 'umzug';
 
+import { type GenericPool } from '@/domain/repositories/DataAccess';
+
 import '@/infrastructure/database/psql/PsqlDataAccess';
 import '@/infrastructure/database/mysql/MysqlDataAccess';
 
 import { getContext, getStorage } from './lib/config.util';
-import { GenericPool } from '@/domain/repositories/DataAccess';
 import { run } from './lib/client.util';
+
+import envConfig from '@/config/env.config';
 
 async function start() {
   // #region Get context from the container
@@ -18,12 +21,12 @@ async function start() {
   // #endregion
 
   // #region Get template typescript script // from file as string
-  const templateFilename = path.join(__dirname, 'template.ts');
+  const templateFilename = path.join(process.cwd(), envConfig.MIGRATE_TEMPLATE);
   const templateText = fs.readFileSync(templateFilename, 'utf-8');
   // #endregion
 
   // #region Get Create Migration
-  const migrationFolder = path.join(__dirname, 'migrations');
+  const migrationFolder = path.join(process.cwd(), envConfig.MIGRATE_FOLDER);
   // #endregion
 
   // #region Get Storage
@@ -32,18 +35,18 @@ async function start() {
 
   const umzug = new Umzug<GenericPool>({
     migrations: {
-      glob: path.join(__dirname, 'migrations', '*.*.*T*.*.*.*.ts'),
+      glob: path.join(migrationFolder, '*.*.*T*.*.*.*.ts'),
     },
     context,
     storage,
     create: {
       folder: migrationFolder,
-      template: (filePath) => [[filePath, templateText]],
+      template: (filePath: string) => [[filePath, templateText]],
     },
     logger: console,
   });
 
-  run({ context, umzug });
+  await run({ context, umzug });
 }
 
 start();

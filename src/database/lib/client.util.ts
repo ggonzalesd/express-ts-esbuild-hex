@@ -41,8 +41,7 @@ export const run = async ({ context, umzug }: Params) => {
         break;
       } else {
         console.log(
-          '🕙 Pending:\n',
-          pending.map((m) => `• ${m.name}`).join('\n'),
+          '🕙 Pending:\n' + pending.map((m) => ` • ${m.name}`).join('\n'),
         );
       }
       break;
@@ -55,8 +54,7 @@ export const run = async ({ context, umzug }: Params) => {
         break;
       } else {
         console.log(
-          '🕙 Executed:\n',
-          executed.map((m) => `• ${m.name}`).join('\n'),
+          '⚡ Executed:\n' + executed.map((m) => ` • ${m.name}`).join('\n'),
         );
       }
       break;
@@ -68,7 +66,7 @@ export const run = async ({ context, umzug }: Params) => {
         process.exit(1);
       }
       console.log(`📝 Creando migración ${arg}`);
-      await umzug.create({ name: arg + '.ts' });
+      await umzug.create({ name: arg + '.migration.ts' });
       console.log(`✅ Migración ${arg} creada`);
       break;
 
@@ -86,4 +84,6 @@ export const run = async ({ context, umzug }: Params) => {
       console.log('  create: Crea una nueva migración');
       break;
   }
+
+  process.exit(0);
 };

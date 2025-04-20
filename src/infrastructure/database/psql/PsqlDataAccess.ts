@@ -1,5 +1,5 @@
 import { inject, container, injectable } from 'tsyringe';
-import { Pool } from 'pg';
+import { type Pool } from 'pg';
 
 import { type DataAccess } from '@/domain/repositories/DataAccess';
 
@@ -8,10 +8,12 @@ import { PsqlProductDB } from './PsqlProduct.database';
 import { PsqlTransaction } from './PsqlTransaction';
 
 import { dependecyName } from '@/tools/dependencies.tool';
-import { PREFIX_ACCESS_DATA } from '@/constants/dependencies.enum';
-import { DEP_PG_POOL } from './Psql.config';
+import {
+  ADAPTER_DATABASE,
+  PREFIX_ACCESS_DATA,
+} from '@/constants/dependencies.enum';
 
-import envConfig from '@/config/env.config';
+import { DEP_PG_POOL } from './Psql.config';
 
 @injectable()
 export class PsqlDataAccess implements DataAccess {
@@ -23,12 +25,9 @@ export class PsqlDataAccess implements DataAccess {
   ) {}
 }
 
-const dbDialect: typeof envConfig.DB_DIALECT = 'postgres';
+const database: typeof ADAPTER_DATABASE = 'postgres';
 
-export const DEP_PSQL_DATA_ACCESS = dependecyName(
-  PREFIX_ACCESS_DATA,
-  dbDialect,
-);
+export const DEP_PSQL_DATA_ACCESS = dependecyName(PREFIX_ACCESS_DATA, database);
 
 container.register<PsqlDataAccess>(DEP_PSQL_DATA_ACCESS, {
   useClass: PsqlDataAccess,

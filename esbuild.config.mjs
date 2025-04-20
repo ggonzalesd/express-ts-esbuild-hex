@@ -1,12 +1,15 @@
 import * as esbuild from 'esbuild';
 
+const entry = process.env.ENTRY || './src/index.ts';
+const minify = process.env.MINIFY === 'true';
+
 esbuild
   .build({
-    entryPoints: ['./src/index.ts'],
+    entryPoints: [entry],
     outdir: 'dist',
 
     bundle: true,
-    minify: false,
+    minify,
 
     format: 'cjs',
     target: 'esnext',
