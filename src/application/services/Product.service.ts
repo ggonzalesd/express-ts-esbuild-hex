@@ -1,13 +1,10 @@
 import { inject, injectable } from 'tsyringe';
 
-import { Product } from '@/domain/entities/Product.entity';
-import { type DataAccess } from '@/domain/repositories/DataAccess';
+import { Product } from '@@core/entities/Product.entity';
+import { type DataAccess } from '@@core/repositories/DataAccess';
 
-import { dependecyName } from '@/tools/dependencies.tool';
-import {
-  ADAPTER_DATABASE,
-  PREFIX_ACCESS_DATA,
-} from '@/constants/dependencies.enum';
+import { dependecyName } from '@@tool';
+import { ADAPTER_DATABASE, PREFIX_ACCESS_DATA } from '@@const';
 
 @injectable()
 export class ProductService {

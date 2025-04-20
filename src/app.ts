@@ -1,8 +1,9 @@
 import { container } from 'tsyringe';
 import express from 'express';
 
-import { DEP_CONFIG_ENV } from '@/constants/dependencies.enum';
-import { type ConfigService } from '@/application/ports/ConfigServide';
+import { DEP_CONFIG_ENV } from '@@const';
+
+import { type ConfigService } from '@@app/ports/ConfigServide';
 
 const envConfig = container.resolve<ConfigService>(DEP_CONFIG_ENV);
 

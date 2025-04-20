@@ -1,14 +1,11 @@
 import { container, inject, injectable } from 'tsyringe';
 import { type Pool } from 'mysql2/promise';
 
-import { dependecyName } from '@/tools/dependencies.tool';
+import { dependecyName } from '@@tool';
 
-import {
-  ADAPTER_DATABASE,
-  PREFIX_ACCESS_DATA,
-} from '@/constants/dependencies.enum';
+import { ADAPTER_DATABASE, PREFIX_ACCESS_DATA } from '@@const';
 
-import { type DataAccess } from '@/domain/repositories/DataAccess';
+import { type DataAccess } from '@@core/repositories/DataAccess';
 
 import { DEP_MYSQL_POOL } from './Mysql.config';
 import { MysqlTransaction } from './MysqlTransaction';

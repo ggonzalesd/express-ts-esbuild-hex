@@ -3,10 +3,10 @@ import 'reflect-metadata';
 import { container } from 'tsyringe';
 import { createServer } from 'http';
 
-import { DEP_CONFIG_ENV } from '@/constants/dependencies.enum';
-import { type ConfigService } from '@/application/ports/ConfigServide';
+import { DEP_CONFIG_ENV } from '@@const';
+import { type ConfigService } from '@@app/ports/ConfigServide';
 
-import '@/infrastructure/environment/dotenv.config';
+import '@@infra/environment/dotenv.config';
 
 import { app } from '@/app';
 

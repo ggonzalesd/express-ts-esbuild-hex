@@ -1,7 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 import { type Pool, type PoolConnection } from 'mysql2/promise';
 
-import { type TransactionManager } from '@/domain/repositories/TransactionManager';
+import { type TransactionManager } from '@@core/repositories/TransactionManager';
 
 import { DEP_MYSQL_POOL } from './Mysql.config';
 

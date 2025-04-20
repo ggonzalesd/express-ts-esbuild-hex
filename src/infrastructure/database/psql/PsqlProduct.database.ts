@@ -1,10 +1,10 @@
 import { inject, injectable } from 'tsyringe';
 import { type Pool } from 'pg';
 
-import { Product } from '@/domain/entities/Product.entity';
+import { Product } from '@@core/entities/Product.entity';
 
-import { type TransactionContext } from '@/domain/repositories/TransactionManager';
-import { type ProductRepository } from '@/domain/repositories/ProductRepository';
+import { type TransactionContext } from '@@core/repositories/TransactionManager';
+import { type ProductRepository } from '@@core/repositories/ProductRepository';
 
 import { DEP_PG_POOL } from './Psql.config';
 

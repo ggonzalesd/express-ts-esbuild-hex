@@ -7,15 +7,10 @@ import {
   type Response,
 } from 'express';
 
-import {
-  HttpFullHandlerPort,
-  HttpRouterPort,
-} from '@/application/route/Http.ports';
-import { dependecyName } from '@/tools/dependencies.tool';
-import {
-  ADAPTER_ROUTING,
-  PREFIX_ADAPTER_ROUTER,
-} from '@/constants/dependencies.enum';
+import { dependecyName } from '@@tool';
+import { ADAPTER_ROUTING, PREFIX_ADAPTER_ROUTER } from '@@const';
+
+import { HttpFullHandlerPort, HttpRouterPort } from '@@app/route/Http.ports';
 
 @injectable()
 export class ExpressRouterAdapter implements HttpRouterPort {

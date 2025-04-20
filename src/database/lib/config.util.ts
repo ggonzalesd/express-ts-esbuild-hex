@@ -3,13 +3,10 @@ import fs from 'node:fs';
 import { container } from 'tsyringe';
 import { type UmzugStorage } from 'umzug';
 
-import { dependecyName } from '@/tools/dependencies.tool';
-import {
-  ADAPTER_DATABASE,
-  PREFIX_ACCESS_DATA,
-} from '@/constants/dependencies.enum';
+import { dependecyName } from '@@tool';
+import { ADAPTER_DATABASE, PREFIX_ACCESS_DATA } from '@@const';
 
-import { DataAccess, GenericPool } from '@/domain/repositories/DataAccess';
+import { DataAccess, GenericPool } from '@@core/repositories/DataAccess';
 
 export const getContext = (): GenericPool => {
   const DATABASE = ADAPTER_DATABASE;

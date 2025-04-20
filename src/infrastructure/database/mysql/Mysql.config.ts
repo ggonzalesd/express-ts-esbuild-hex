@@ -1,14 +1,10 @@
 import { container } from 'tsyringe';
 import { createPool } from 'mysql2/promise';
 
-import { dependecyName } from '@/tools/dependencies.tool';
-import {
-  ADAPTER_DATABASE,
-  DEP_CONFIG_ENV,
-  PREFIX_POOL,
-} from '@/constants/dependencies.enum';
+import { dependecyName } from '@@tool';
+import { ADAPTER_DATABASE, DEP_CONFIG_ENV, PREFIX_POOL } from '@@const';
 
-import { ConfigService } from '@/application/ports/ConfigServide';
+import { ConfigService } from '@@app/ports/ConfigServide';
 
 const envConfig = container.resolve<ConfigService>(DEP_CONFIG_ENV);
 

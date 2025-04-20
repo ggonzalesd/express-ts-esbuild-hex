@@ -3,8 +3,8 @@ import { container } from 'tsyringe';
 import { z } from 'zod';
 import dotenv from 'dotenv';
 
-import { ConfigService } from '@/application/ports/ConfigServide';
-import { DEP_CONFIG_ENV } from '@/constants/dependencies.enum';
+import { ConfigService } from '@@app/ports/ConfigServide';
+import { DEP_CONFIG_ENV } from '@@const';
 
 const filesnames = {
   development: '.env',

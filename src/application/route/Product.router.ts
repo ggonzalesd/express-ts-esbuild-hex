@@ -1,10 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 
-import { dependecyName } from '@/tools/dependencies.tool';
-import {
-  ADAPTER_ROUTING,
-  PREFIX_ADAPTER_ROUTER,
-} from '@/constants/dependencies.enum';
+import { dependecyName } from '@@tool';
+import { ADAPTER_ROUTING, PREFIX_ADAPTER_ROUTER } from '@@const';
 
 import { type HttpRouterPort } from './Http.ports';
 
