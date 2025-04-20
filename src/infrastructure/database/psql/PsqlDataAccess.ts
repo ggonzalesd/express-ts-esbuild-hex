@@ -1,4 +1,4 @@
-import { inject, container, injectable } from 'tsyringe';
+import { inject, injectable } from 'tsyringe';
 import { type Pool } from 'pg';
 
 import { type DataAccess } from '@/domain/repositories/DataAccess';
@@ -15,7 +15,10 @@ import {
 
 import { DEP_PG_POOL } from './Psql.config';
 
-@injectable()
+const database: typeof ADAPTER_DATABASE = 'postgres';
+
+export const DEP_PSQL_DATA_ACCESS = dependecyName(PREFIX_ACCESS_DATA, database);
+@injectable({ token: DEP_PSQL_DATA_ACCESS })
 export class PsqlDataAccess implements DataAccess {
   constructor(
     @inject(DEP_PG_POOL) public pool: Pool,
@@ -24,11 +27,3 @@ export class PsqlDataAccess implements DataAccess {
     @inject(PsqlTransaction) public transaction: PsqlTransaction,
   ) {}
 }
-
-const database: typeof ADAPTER_DATABASE = 'postgres';
-
-export const DEP_PSQL_DATA_ACCESS = dependecyName(PREFIX_ACCESS_DATA, database);
-
-container.register<PsqlDataAccess>(DEP_PSQL_DATA_ACCESS, {
-  useClass: PsqlDataAccess,
-});

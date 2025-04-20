@@ -4,14 +4,15 @@ import { Product } from '@/domain/entities/Product.entity';
 import { type DataAccess } from '@/domain/repositories/DataAccess';
 
 import { dependecyName } from '@/tools/dependencies.tool';
-import { PREFIX_ACCESS_DATA } from '@/constants/dependencies.enum';
-
-import envConfig from '@/config/env.config';
+import {
+  ADAPTER_DATABASE,
+  PREFIX_ACCESS_DATA,
+} from '@/constants/dependencies.enum';
 
 @injectable()
 export class ProductService {
   constructor(
-    @inject(dependecyName(PREFIX_ACCESS_DATA, envConfig.DB_DIALECT))
+    @inject(dependecyName(PREFIX_ACCESS_DATA, ADAPTER_DATABASE))
     private dataAccess: DataAccess,
   ) {}
 

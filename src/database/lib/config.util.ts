@@ -4,14 +4,15 @@ import { container } from 'tsyringe';
 import { type UmzugStorage } from 'umzug';
 
 import { dependecyName } from '@/tools/dependencies.tool';
-import { PREFIX_ACCESS_DATA } from '@/constants/dependencies.enum';
+import {
+  ADAPTER_DATABASE,
+  PREFIX_ACCESS_DATA,
+} from '@/constants/dependencies.enum';
 
 import { DataAccess, GenericPool } from '@/domain/repositories/DataAccess';
 
-import envConfig from '@/config/env.config';
-
 export const getContext = (): GenericPool => {
-  const DATABASE = envConfig.DB_DIALECT;
+  const DATABASE = ADAPTER_DATABASE;
   const depName = dependecyName(PREFIX_ACCESS_DATA, DATABASE);
 
   const accessData = container.resolve<DataAccess>(depName);
