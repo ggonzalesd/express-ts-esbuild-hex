@@ -13,7 +13,6 @@ import { type ConfigService } from '@/application/ports/ConfigService.port';
 
 import '@@infra/environment/dotenv.config';
 import '@@infra/database/psql/PsqlDataAccess';
-import '@@infra/database/mysql/MysqlDataAccess';
 
 import { getContext, getStorage, run } from './lib';
 

@@ -1,45 +1,63 @@
 export class User {
   constructor(
-    private id: number,
-    private name: string,
+    private id: string,
+    private display: string,
+    private username: string,
     private email: string,
     private password: string,
+    private verified: boolean,
+    private role: string,
+    private state: string,
     private createdAt: Date,
-    private credits: number,
   ) {}
 
-  public getId(): number {
+  getId(): string {
     return this.id;
   }
-  public getName(): string {
-    return this.name;
+  getDisplay(): string {
+    return this.display;
   }
-  public getEmail(): string {
+  getUsername(): string {
+    return this.username;
+  }
+  getEmail(): string {
     return this.email;
   }
-  public getPassword(): string {
+  getPassword(): string {
     return this.password;
   }
-  public getCreatedAt(): Date {
+  getVerified(): boolean {
+    return this.verified;
+  }
+  getRole(): string {
+    return this.role;
+  }
+  getState(): string {
+    return this.state;
+  }
+  getCreatedAt(): Date {
     return this.createdAt;
   }
-  public getCredits(): number {
-    return this.credits;
-  }
 
-  public setId(id: number): void {
-    this.id = id;
+  setDisplay(display: string): void {
+    this.display = display;
   }
-  public setName(name: string): void {
-    this.name = name;
+  setUsername(username: string): void {
+    this.username = username;
   }
-  public setEmail(email: string): void {
+  setEmail(email: string): void {
     this.email = email;
   }
-  public setPassword(password: string): void {
+  setPassword(password: string): void {
     this.password = password;
   }
-  public setCredits(credits: number): void {
-    this.credits = credits;
+  setVerified(verified: boolean): void {
+    this.verified = verified;
+  }
+  setRole(role: string): void {
+    this.role = role;
+  }
+  setState(state: string): void {
+    this.state = state;
   }
 }
