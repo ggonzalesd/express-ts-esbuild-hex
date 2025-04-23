@@ -29,4 +29,6 @@ export interface ConfigService {
   API_URL: string;
   IS_PRODUCTION: boolean;
   IS_DEVELOPMENT: boolean;
+
+  LOGGER_FILE: string;
 }

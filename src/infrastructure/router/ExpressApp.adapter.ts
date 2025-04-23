@@ -1,11 +1,14 @@
-import { container } from 'tsyringe';
+import { container, inject, singleton } from 'tsyringe';
 
+import fs from 'node:fs';
 import { createServer } from 'node:http';
 import express, { Express } from 'express';
+import morgan from 'morgan';
 
 import { dependecyName } from '@/tools';
-import { ADAPTER_ROUTING, PREFIX_ADAPTER_APP } from '@/constants';
+import { ADAPTER_ROUTING, DEP_CONFIG_ENV, PREFIX_ADAPTER_APP } from '@@const';
 
+import { type ConfigService } from '@@app/ports/ConfigService.port';
 import { type HttpApplication } from '@@app/ports/HttpService.port';
 
 import { ExpressRouterAdapter } from './ExpressRouter.adapter';
@@ -14,13 +17,17 @@ const routing: typeof ADAPTER_ROUTING = 'express';
 
 const DEP_EXPRESS_APP_ROUTER = dependecyName(PREFIX_ADAPTER_APP, routing);
 
+@singleton()
 export class ExpressAppAdapter
   extends ExpressRouterAdapter
   implements HttpApplication
 {
   private expressApp: Express;
 
-  constructor() {
+  constructor(
+    @inject(DEP_CONFIG_ENV)
+    private config: ConfigService,
+  ) {
     const app = express();
 
     super(app);
@@ -33,6 +40,16 @@ export class ExpressAppAdapter
     this.expressApp = app;
 
     app.disable('x-powered-by');
+
+    if (this.config.NODE_ENV === 'production') {
+      const accessLogStream = fs.createWriteStream(this.config.LOGGER_FILE, {
+        flags: 'a',
+      });
+      app.use(morgan('combined'));
+      app.use(morgan('combined', { stream: accessLogStream }));
+    } else if (this.config.NODE_ENV === 'development') {
+      app.use(morgan('dev'));
+    }
 
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
@@ -56,5 +73,5 @@ export class ExpressAppAdapter
 }
 
 container.register(DEP_EXPRESS_APP_ROUTER, {
-  useValue: new ExpressAppAdapter(),
+  useClass: ExpressAppAdapter,
 });

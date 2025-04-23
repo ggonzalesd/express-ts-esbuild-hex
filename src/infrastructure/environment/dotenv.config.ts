@@ -11,7 +11,7 @@ const filesnames = {
   development: '.env',
   production: '.env.production',
   test: '.env.test',
-};
+} as const;
 
 const filename =
   filesnames[process.env.NODE_ENV as keyof typeof filesnames] ||
@@ -59,6 +59,8 @@ const envSchema = z
 
     MIGRATE_TEMPLATE: z.string().default('template.ts'),
     MIGRATE_FOLDER: z.string().default('migrations'),
+
+    LOGGER_FILE: z.string().default('~/logs.log'),
   })
   .transform((env) => {
     const API_BASE = [env.API_PREFIX, env.API_VERSION]
