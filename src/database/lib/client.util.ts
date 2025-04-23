@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { Umzug } from 'umzug';
-import { GenericPool } from '@@core/repositories/DataAccess';
+import { GenericPool } from '@/domain/repositories/DataAccess.port';
 
 interface Params {
   context: GenericPool;

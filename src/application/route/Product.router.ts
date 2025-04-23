@@ -1,19 +1,35 @@
-import { inject, injectable } from 'tsyringe';
+import { inject, singleton } from 'tsyringe';
 
-import { dependecyName } from '@@tool';
-import { ADAPTER_ROUTING, PREFIX_ADAPTER_ROUTER } from '@@const';
+import { DEP_ROUTING_ROUTER } from '@@const';
 
-import { type HttpRouterPort } from './Http.ports';
+import { HttpRouter } from '@@app/ports/HttpService.port';
 
-@injectable()
+@singleton()
 export class ProductRouter {
   constructor(
-    @inject(dependecyName(PREFIX_ADAPTER_ROUTER, ADAPTER_ROUTING))
-    private readonly router: HttpRouterPort,
+    @inject(DEP_ROUTING_ROUTER)
+    public router: HttpRouter,
   ) {
-    this.router.get('/', (req, res) => {
+    router.handler('GET /', (req, res) => {
       return res.json({
-        message: 'Product router',
+        message: 'Products',
+      });
+    });
+
+    router.handler('GET /:id', (req, res) => {
+      const { id } = req.params;
+      return res.json({
+        message: `Product #${id}`,
+      });
+    });
+
+    router.handler('POST /', (req, res) => {
+      const { name, price } = req.body as {
+        name: string;
+        price: number;
+      };
+      return res.json({
+        message: `Product ${name} with price ${price} created`,
       });
     });
   }

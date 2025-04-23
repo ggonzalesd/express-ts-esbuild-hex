@@ -4,7 +4,7 @@ import { createPool } from 'mysql2/promise';
 import { dependecyName } from '@@tool';
 import { ADAPTER_DATABASE, DEP_CONFIG_ENV, PREFIX_POOL } from '@@const';
 
-import { ConfigService } from '@@app/ports/ConfigServide';
+import { ConfigService } from '@@app/ports/ConfigService.port';
 
 const envConfig = container.resolve<ConfigService>(DEP_CONFIG_ENV);
 

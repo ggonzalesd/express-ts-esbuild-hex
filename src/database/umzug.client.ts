@@ -8,8 +8,8 @@ import { container } from 'tsyringe';
 
 import { DEP_CONFIG_ENV } from '@@const';
 
-import { type GenericPool } from '@@core/repositories/DataAccess';
-import { type ConfigService } from '@@app/ports/ConfigServide';
+import { type GenericPool } from '@/domain/repositories/DataAccess.port';
+import { type ConfigService } from '@/application/ports/ConfigService.port';
 
 import '@@infra/environment/dotenv.config';
 import '@@infra/database/psql/PsqlDataAccess';

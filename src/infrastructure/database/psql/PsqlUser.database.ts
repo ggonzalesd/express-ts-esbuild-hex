@@ -3,8 +3,8 @@ import { type Pool } from 'pg';
 
 import { User } from '@@core/entities/User.entity';
 
-import { type TransactionContext } from '@@core/repositories/TransactionManager';
-import { type UserRepository } from '@@core/repositories/UserRepository';
+import { type TransactionContext } from '@@core/repositories/TransactionManager.port';
+import { type UserRepository } from '@@core/repositories/UserRepository.port';
 
 import { DEP_PG_POOL } from './Psql.config';
 

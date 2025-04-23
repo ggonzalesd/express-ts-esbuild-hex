@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { type MigrationFn } from 'umzug';
-import { type GenericPool } from '@@core/repositories/DataAccess';
+import { type GenericPool } from '@/domain/repositories/DataAccess.port';
 
 export const up: MigrationFn<GenericPool> = async (params) => {
   const {

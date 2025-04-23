@@ -1,5 +1,8 @@
 import { Product } from '../entities/Product.entity';
-import { type TransactionContext } from './TransactionManager';
+import {
+  DatabaseType,
+  type TransactionContext,
+} from './TransactionManager.port';
 
 export interface ProductRepository<T extends DatabaseType = DatabaseType> {
   findAll(ctx?: TransactionContext<T>): Promise<Product[]>;

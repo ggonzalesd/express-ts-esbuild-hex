@@ -1,15 +1,15 @@
 import { inject, injectable } from 'tsyringe';
 
-import { Product } from '@@core/entities/Product.entity';
-import { type DataAccess } from '@@core/repositories/DataAccess';
-
 import { dependecyName } from '@@tool';
-import { ADAPTER_DATABASE, PREFIX_ACCESS_DATA } from '@@const';
+import { ADAPTER_DATABASE, PREFIX_DATA_ACCESS } from '@@const';
+
+import { Product } from '@@core/entities/Product.entity';
+import { type DataAccess } from '@/domain/repositories/DataAccess.port';
 
 @injectable()
 export class ProductService {
   constructor(
-    @inject(dependecyName(PREFIX_ACCESS_DATA, ADAPTER_DATABASE))
+    @inject(dependecyName(PREFIX_DATA_ACCESS, ADAPTER_DATABASE))
     private dataAccess: DataAccess,
   ) {}
 

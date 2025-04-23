@@ -1,22 +1,13 @@
-/* eslint-disable no-console */
 import 'reflect-metadata';
 import { container } from 'tsyringe';
-import { createServer } from 'http';
 
-import { DEP_CONFIG_ENV } from '@@const';
-import { type ConfigService } from '@@app/ports/ConfigServide';
+import { BootstrapApplication } from '@@app/bootstrap';
 
-import '@@infra/environment/dotenv.config';
+import '@@app/server.service';
+import '@@app/rest.service';
 
-import { app } from '@/app';
+import '@@infra/router/Express.adapter';
 
-const envConfig = container.resolve<ConfigService>(DEP_CONFIG_ENV);
+const bootstrap = container.resolve<BootstrapApplication>(BootstrapApplication);
 
-const { PORT, NODE_ENV, API_URL } = envConfig;
-
-const server = createServer(app);
-
-server.listen(PORT, () => {
-  console.log(`Server is running on ${API_URL}`);
-  console.log(`Environment: ${NODE_ENV}`);
-});
+bootstrap.start();

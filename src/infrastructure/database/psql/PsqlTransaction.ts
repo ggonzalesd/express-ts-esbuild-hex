@@ -1,7 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 import { type Pool, type PoolClient } from 'pg';
 
-import { type TransactionManager } from '@@core/repositories/TransactionManager';
+import { type TransactionManager } from '@@core/repositories/TransactionManager.port';
 
 import { DEP_PG_POOL } from './Psql.config';
 

@@ -1,3 +1,3 @@
-export const dependecyName = (prefix: string, name: string) => {
-  return `${prefix}-${name}`;
+export const dependecyName = (...splits: string[]) => {
+  return splits.join('-');
 };

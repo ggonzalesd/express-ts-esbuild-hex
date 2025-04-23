@@ -1,5 +1,8 @@
 import { User } from '../entities/User.entity';
-import { type TransactionContext } from './TransactionManager';
+import {
+  DatabaseType,
+  type TransactionContext,
+} from './TransactionManager.port';
 
 export interface UserRepository<T extends DatabaseType = DatabaseType> {
   findAll(ctx?: TransactionContext<T>): Promise<User[]>;

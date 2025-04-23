@@ -1,6 +1,6 @@
-import { type UserRepository } from './UserRepository';
-import { type ProductRepository } from './ProductRepository';
-import { type TransactionManager } from './TransactionManager';
+import { type UserRepository } from './UserRepository.port';
+import { type ProductRepository } from './ProductRepository.port';
+import { type TransactionManager } from './TransactionManager.port';
 
 export type GenericPool = {
   query: <T>(sql: string, values?: unknown) => Promise<T>;

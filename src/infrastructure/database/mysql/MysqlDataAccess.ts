@@ -3,9 +3,9 @@ import { type Pool } from 'mysql2/promise';
 
 import { dependecyName } from '@@tool';
 
-import { ADAPTER_DATABASE, PREFIX_ACCESS_DATA } from '@@const';
+import { ADAPTER_DATABASE, PREFIX_DATA_ACCESS } from '@@const';
 
-import { type DataAccess } from '@@core/repositories/DataAccess';
+import { type DataAccess } from '@@core/repositories/DataAccess.port';
 
 import { DEP_MYSQL_POOL } from './Mysql.config';
 import { MysqlTransaction } from './MysqlTransaction';
@@ -26,7 +26,7 @@ export class MysqlDataAccess implements DataAccess {
 const database: typeof ADAPTER_DATABASE = 'mysql';
 
 export const DEP_MYSQL_DATA_ACCESS = dependecyName(
-  PREFIX_ACCESS_DATA,
+  PREFIX_DATA_ACCESS,
   database,
 );
 
