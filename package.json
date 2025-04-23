@@ -1,8 +1,10 @@
 {
   "scripts": {
-    "dev": "ts-node-dev -r tsconfig-paths/register src/index.ts",
-    "test": "NODE_ENV=test jest --detectOpenHandles --forceExit",
     "start": "node dist/index.js",
+    "start:multi": "concurrently --names \"server-1,server-2,server-3,balancer\" --prefix-colors \"blue,green,magenta,yellow\" \"PORT=3001 node --run start\" \"PORT=3002 node --run start\" \"PORT=3003 node --run start\" \"node load-balancer.cjs\"",
+    "dev": "ts-node-dev -r tsconfig-paths/register src/index.ts",
+    "dev:multi": "concurrently --names \"server-1,server-2,server-3,balancer\" --prefix-colors \"blue,green,magenta,yellow\" \"PORT=3001 node --run dev\" \"PORT=3002 node --run dev\" \"PORT=3003 node --run dev\" \"node load-balancer.cjs\"",
+    "test": "echo (in dev) NODE_ENV=test jest --detectOpenHandles --forceExit",
     "build": "node esbuild.config.mjs",
     "eslint": "eslint .",
     "migrate": "ts-node -r tsconfig-paths/register src/database/umzug.client.ts migrate",
@@ -26,6 +28,7 @@
     "concurrently": "^9.1.2",
     "esbuild": "^0.25.2",
     "eslint": "^9.24.0",
+    "http-proxy": "^1.18.1",
     "prettier": "^3.5.3",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
