@@ -56,7 +56,6 @@ export type HttpCallback = (
   req: HttpRequest,
   res: HttpResponse,
   next: HttpNext,
-  err?: unknown,
 ) => void | Promise<void>;
 
 export type HttpHandler<T = HttpCallback | HttpRouter> = (

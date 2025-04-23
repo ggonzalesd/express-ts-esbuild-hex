@@ -1,4 +1,4 @@
-import { container, injectable } from 'tsyringe';
+import { container } from 'tsyringe';
 
 import {
   Router,
@@ -36,7 +36,7 @@ export class ExpressRouterAdapter implements HttpRouter {
     this.expressRouter = router;
   }
 
-  private requestAdapter(req: Request): HttpRequest {
+  private static requestAdapter(req: Request): HttpRequest {
     return {
       method: req.method,
       body: req.body,
@@ -49,7 +49,7 @@ export class ExpressRouterAdapter implements HttpRouter {
     };
   }
 
-  private responseAdapter(res: Response): HttpResponse {
+  private static responseAdapter(res: Response): HttpResponse {
     return {
       json: (data: unknown) => res.json(data),
       send: (data: unknown) => res.send(data),
@@ -79,17 +79,11 @@ export class ExpressRouterAdapter implements HttpRouter {
       return router;
     }
 
-    return (
-      error: unknown,
-      req: Request,
-      res: Response,
-      next: NextFunction,
-    ) => {
+    return (req: Request, res: Response, next: NextFunction) => {
       return handler(
-        this.requestAdapter(req),
-        this.responseAdapter(res),
+        ExpressRouterAdapter.requestAdapter(req),
+        ExpressRouterAdapter.responseAdapter(res),
         next,
-        error,
       );
     };
   }
@@ -100,7 +94,7 @@ export class ExpressRouterAdapter implements HttpRouter {
     const ops = options ?? 'USE';
 
     // eslint-disable-next-line prefer-const
-    let [method = 'USE', path = '/'] = ops.split(' ', 2) as [
+    let [method = 'USE', path] = ops.split(' ', 2) as [
       (typeof HttpMethods)[number] | undefined,
       string | undefined,
     ];
@@ -112,26 +106,14 @@ export class ExpressRouterAdapter implements HttpRouter {
 
     const adapters = handlers.map(this.adapter);
 
-    if (expressMethod === 'use') {
-      this.expressRouter.use(path, ...adapters);
-    }
-    if (expressMethod === 'all') {
-      this.expressRouter.all(path, ...adapters);
-    }
-    if (expressMethod === 'get') {
-      this.expressRouter.get(path, ...adapters);
-    }
-    if (expressMethod === 'post') {
-      this.expressRouter.post(path, ...adapters);
-    }
+    const router = Object.assign(this.expressRouter, {
+      methodfn: this.expressRouter[expressMethod] as IRouter['use'],
+    });
 
-    if (this.s === 0) {
-      this.expressRouter.get('/health', (req, res) => {
-        res.json({
-          message: 'Hello World',
-        });
-      });
-      this.s++;
+    if (path) {
+      router.methodfn(path, ...adapters);
+    } else {
+      router.methodfn(...adapters);
     }
   };
 }

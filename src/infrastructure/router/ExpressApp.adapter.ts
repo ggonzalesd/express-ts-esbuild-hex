@@ -1,4 +1,4 @@
-import { container, injectable } from 'tsyringe';
+import { container } from 'tsyringe';
 
 import { createServer } from 'node:http';
 import express, { Express } from 'express';
@@ -24,8 +24,6 @@ export class ExpressAppAdapter
     const app = express();
 
     super(app);
-
-    console.log('ExpressAppAdapter');
 
     this.attach = this.attach.bind(this);
     this.set = this.set.bind(this);
