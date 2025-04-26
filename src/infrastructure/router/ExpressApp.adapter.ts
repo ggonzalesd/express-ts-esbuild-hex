@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import { createServer } from 'node:http';
 import express, { Express } from 'express';
 import morgan from 'morgan';
+import cors from 'cors';
 
 import { dependecyName } from '@/tools';
 import { ADAPTER_ROUTING, DEP_CONFIG_ENV, PREFIX_ADAPTER_APP } from '@@const';
@@ -51,8 +52,13 @@ export class ExpressAppAdapter
       app.use(morgan('dev'));
     }
 
+    app.use(cors());
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
+
+    app.use(
+      express.static('/home/archiso/dev/node/express-typescript/v01/public'),
+    );
   }
 
   public attach(server: ReturnType<typeof createServer>) {

@@ -8,6 +8,7 @@ import '@@app/rest.service';
 
 import '@@infra/environment/dotenv.config';
 import '@@infra/router/Express.adapter';
+import '@@infra/websocket/WsApp.adapter';
 
 const bootstrap = container.resolve<BootstrapApplication>(BootstrapApplication);
 
