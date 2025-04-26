@@ -10,5 +10,10 @@ services:
       - "5432:5432"
     volumes:
       - esbuild-ts-psql-data:/var/lib/postgresql/data
+  esbuild-redis:
+    image: redis:7
+    container_name: esbuild-redis
+    ports:
+      - "6379:6379"
 volumes:
   esbuild-ts-psql-data:

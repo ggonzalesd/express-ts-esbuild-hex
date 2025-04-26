@@ -1,25 +1,42 @@
-import { inject, singleton } from 'tsyringe';
 import {
+  EventSubscriptorService,
   WsApplication,
   WsClient,
   WsRequest,
   WsStop,
-} from './ports/WsService.port';
-import { DEP_WS_APP } from '@/constants';
+} from './ports/';
 
-@singleton()
 export class WsApplicationService {
   constructor(
-    @inject(DEP_WS_APP) public app: WsApplication<{ username: string }>,
+    public app: WsApplication<{
+      username: string;
+    }>,
+    private subscriptor: EventSubscriptorService,
   ) {
     this.app.connection(this.onConnection.bind(this));
 
     this.app.message('send:message', this.onSendMessage.bind(this));
 
     this.app.close(this.handlerClose.bind(this));
+
+    this.subscriptor.sub('chats', this.onEventSendToChat.bind(this));
   }
 
-  onConnection(
+  async onEventSendToChat(data: string) {
+    const { room, message } = JSON.parse(data) as {
+      room: string;
+      message: string;
+    };
+
+    this.app.broadcast([room], 'receive:message', {
+      message: {
+        username: 'System',
+        text: message,
+      },
+    });
+  }
+
+  async onConnection(
     ws: WsClient<{ username: string }>,
     req: WsRequest,
     stop: WsStop,

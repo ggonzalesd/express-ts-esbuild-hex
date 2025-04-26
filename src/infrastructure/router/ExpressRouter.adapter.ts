@@ -1,5 +1,3 @@
-import { container } from 'tsyringe';
-
 import {
   Router,
   type NextFunction,
@@ -7,9 +5,6 @@ import {
   type Response,
   type IRouter,
 } from 'express';
-
-import { dependecyName } from '@@tool';
-import { ADAPTER_ROUTING, PREFIX_ADAPTER_ROUTER } from '@@const';
 
 import {
   HttpMethods,
@@ -19,13 +14,6 @@ import {
   type HttpResponse,
   type HttpRouter,
 } from '@@app/ports/HttpService.port';
-
-const routing: typeof ADAPTER_ROUTING = 'express';
-
-const DEP_EXPRESS_ROUTER_ADAPTER = dependecyName(
-  PREFIX_ADAPTER_ROUTER,
-  routing,
-);
 
 export class ExpressRouterAdapter implements HttpRouter {
   public expressRouter: IRouter;
@@ -117,10 +105,3 @@ export class ExpressRouterAdapter implements HttpRouter {
     }
   };
 }
-
-container.register(DEP_EXPRESS_ROUTER_ADAPTER, {
-  useFactory: () => {
-    const router = Router();
-    return new ExpressRouterAdapter(router);
-  },
-});

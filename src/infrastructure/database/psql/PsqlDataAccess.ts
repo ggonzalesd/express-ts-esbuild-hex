@@ -1,25 +1,45 @@
-import { inject, injectable } from 'tsyringe';
-import { type Pool } from 'pg';
-
-import { dependecyName } from '@@tool';
-import { ADAPTER_DATABASE, PREFIX_DATA_ACCESS } from '@@const';
-
-import { type DataAccess } from '@@core/repositories/DataAccess.port';
-
-import { DEP_PG_POOL } from './Psql.config';
-import { PsqlTransaction } from './PsqlTransaction';
+import { psqlPoolFactory } from './Psql.config';
 import { PsqlUserDB } from './PsqlUser.database';
 import { PsqlProductDB } from './PsqlProduct.database';
 
-const database: typeof ADAPTER_DATABASE = 'postgres';
+import type {
+  PoolClient,
+  PoolQuery,
+  DataAccess,
+  PoolConnection,
+} from '@@core/repositories/DataAccess.port';
 
-export const DEP_PSQL_DATA_ACCESS = dependecyName(PREFIX_DATA_ACCESS, database);
-@injectable({ token: DEP_PSQL_DATA_ACCESS })
+import { ConfigService } from '@@app/ports';
+
+import { UserRepository } from '@@core/repositories/UserRepository.port';
+import { ProductRepository } from '@@core/repositories/ProductRepository.port';
+
 export class PsqlDataAccess implements DataAccess {
-  constructor(
-    @inject(DEP_PG_POOL) public pool: Pool,
-    @inject(PsqlUserDB) public user: PsqlUserDB,
-    @inject(PsqlProductDB) public product: PsqlProductDB,
-    @inject(PsqlTransaction) public transaction: PsqlTransaction,
-  ) {}
+  public pool: PoolClient;
+
+  public user: UserRepository;
+  public product: ProductRepository;
+
+  constructor(public configServier: ConfigService) {
+    this.pool = psqlPoolFactory(configServier);
+
+    this.user = new PsqlUserDB(this.pool);
+    this.product = new PsqlProductDB(this.pool);
+  }
+
+  public async transaction<T>(fn: (ctx: PoolQuery) => Promise<T>): Promise<T> {
+    let connection: PoolConnection | null = null;
+    try {
+      connection = await this.pool.connect();
+      await connection.begin();
+      const result = await fn(connection);
+      await connection.commit();
+      return result;
+    } catch (error) {
+      await connection?.rollback();
+      throw error;
+    } finally {
+      connection?.release();
+    }
+  }
 }

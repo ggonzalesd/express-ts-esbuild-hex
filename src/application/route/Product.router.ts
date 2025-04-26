@@ -1,15 +1,12 @@
-import { inject, singleton } from 'tsyringe';
-
-import { DEP_ROUTING_ROUTER } from '@@const';
-
 import { HttpRouter } from '@@app/ports/HttpService.port';
 
-@singleton()
 export class ProductRouter {
-  constructor(
-    @inject(DEP_ROUTING_ROUTER)
-    public router: HttpRouter,
-  ) {
+  public router: HttpRouter;
+
+  constructor(private routerFactory: () => HttpRouter) {
+    const router = this.routerFactory();
+    this.router = router;
+
     router.handler('GET /', (req, res) => {
       return res.json({
         message: 'Products',

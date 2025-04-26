@@ -1,32 +1,23 @@
-import { inject, injectable } from 'tsyringe';
-import { type Pool } from 'pg';
-
 import { Product } from '@@core/entities/Product.entity';
 
-import { type TransactionContext } from '@@core/repositories/TransactionManager.port';
 import { type ProductRepository } from '@@core/repositories/ProductRepository.port';
+import { PoolClient, PoolQuery } from '@/domain/repositories/DataAccess.port';
 
-import { DEP_PG_POOL } from './Psql.config';
+export class PsqlProductDB implements ProductRepository {
+  constructor(private client: PoolClient) {}
 
-type Repository = ProductRepository<'pg'>;
-type CTX = TransactionContext<'pg'>;
-
-@injectable()
-export class PsqlProductDB implements Repository {
-  constructor(@inject(DEP_PG_POOL) private client: Pool) {}
-
-  async findAll(ctx?: CTX): Promise<Product[]> {
+  async findAll(ctx?: PoolQuery): Promise<Product[]> {
     const client = ctx ?? this.client;
-    const result = await client.query<Product>('SELECT * FROM products');
-    return result.rows;
+    const result = await client.query<Product[]>('SELECT * FROM products');
+    return result;
   }
 
-  async findById(id: string, ctx?: CTX): Promise<Product | null> {
+  async findById(id: string, ctx?: PoolQuery): Promise<Product | null> {
     const client = ctx ?? this.client;
-    const result = await client.query<Product>(
+    const result = await client.query<Product[]>(
       'SELECT * FROM products WHERE id = $1',
       [id],
     );
-    return result.rows[0] || null;
+    return result[0] || null;
   }
 }

@@ -1,52 +1,43 @@
-import { inject, injectable } from 'tsyringe';
-import { type Pool } from 'pg';
-
+import { PoolClient, PoolQuery } from '@/domain/repositories/DataAccess.port';
 import { User } from '@@core/entities/User.entity';
 
-import { type TransactionContext } from '@@core/repositories/TransactionManager.port';
 import { type UserRepository } from '@@core/repositories/UserRepository.port';
 
-import { DEP_PG_POOL } from './Psql.config';
+export class PsqlUserDB implements UserRepository {
+  constructor(private client: PoolClient) {}
 
-type Repository = UserRepository<'pg'>;
-type CTX = TransactionContext<'pg'>;
-
-@injectable()
-export class PsqlUserDB implements Repository {
-  constructor(@inject(DEP_PG_POOL) private client: Pool) {}
-
-  async findAll(ctx?: CTX): Promise<User[]> {
+  async findAll(ctx?: PoolQuery): Promise<User[]> {
     const client = ctx ?? this.client;
-    const result = await client.query<User>('SELECT * FROM users');
-    return result.rows;
+    const result = await client.query<User[]>('SELECT * FROM users');
+    return result;
   }
 
-  async findById(id: string, ctx?: CTX): Promise<User | null> {
+  async findById(id: string, ctx?: PoolQuery): Promise<User | null> {
     const client = ctx ?? this.client;
-    const result = await client.query<User>(
+    const result = await client.query<User[]>(
       'SELECT * FROM users WHERE id = $1',
       [id],
     );
-    return result.rows[0] || null;
+    return result[0] || null;
   }
 
-  async findByEmail(email: string, ctx?: CTX): Promise<User | null> {
+  async findByEmail(email: string, ctx?: PoolQuery): Promise<User | null> {
     const client = ctx ?? this.client;
-    const result = await client.query<User>(
+    const result = await client.query<User[]>(
       'SELECT * FROM users WHERE email = $1',
       [email],
     );
-    return result.rows[0] || null;
+    return result[0] || null;
   }
 
-  async create(user: User, ctx?: CTX): Promise<number> {
+  async create(user: User, ctx?: PoolQuery): Promise<string> {
     const client = ctx ?? this.client;
 
     const result = await client.query<User>(
       'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *',
-      [user.getName(), user.getEmail(), user.getPassword()],
+      [user.getUsername(), user.getEmail(), user.getPassword()],
     );
 
-    return result.rows[0].getId();
+    return result.getId();
   }
 }

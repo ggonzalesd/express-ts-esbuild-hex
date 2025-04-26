@@ -1,24 +1,52 @@
-import { container } from 'tsyringe';
-import { Pool } from 'pg';
+import { Pool as PgPool, PoolClient as PgPoolClient } from 'pg';
 
-import { dependecyName } from '@@tool';
-import { ADAPTER_DATABASE, DEP_CONFIG_ENV, PREFIX_POOL } from '@@const';
+import type {
+  PoolClient,
+  PoolConnection,
+} from '@@core/repositories/DataAccess.port';
 
 import { type ConfigService } from '@@app/ports/ConfigService.port';
 
-const envConfig = container.resolve<ConfigService>(DEP_CONFIG_ENV);
+export const psqlPoolFactory: (envConfig: ConfigService) => PoolClient = (
+  envConfig: ConfigService,
+) => {
+  const pool = new PgPool({
+    host: envConfig.DB_HOST,
+    port: envConfig.DB_PORT,
+    user: envConfig.DB_USER,
+    password: envConfig.DB_PASS,
+    database: envConfig.DB_NAME,
+    max: envConfig.DB_CONNECTION_POOL_MAX,
+  });
 
-const psqlPool = new Pool({
-  host: envConfig.DB_HOST,
-  port: envConfig.DB_PORT,
-  user: envConfig.DB_USER,
-  password: envConfig.DB_PASS,
-  database: envConfig.DB_NAME,
-  max: envConfig.DB_CONNECTION_POOL_MAX,
-});
+  const queryFactory =
+    (client: PgPool | PgPoolClient) =>
+    async <T>(sql: string, ...values: unknown[]): Promise<T> => {
+      // TODO complete the query with the correct type
+      client.query(sql, values);
+      return null as unknown as T;
+    };
 
-const database: typeof ADAPTER_DATABASE = 'postgres';
+  return {
+    query: queryFactory(pool),
+    connect: async (): Promise<PoolConnection> => {
+      const connection = await pool.connect();
 
-export const DEP_PG_POOL = dependecyName(PREFIX_POOL, database);
-
-container.register(DEP_PG_POOL, { useValue: psqlPool });
+      return {
+        query: queryFactory(connection),
+        begin: async () => {
+          await connection.query('BEGIN');
+        },
+        commit: async () => {
+          await connection.query('COMMIT');
+        },
+        rollback: async () => {
+          await connection.query('ROLLBACK');
+        },
+        release: () => {
+          connection.release();
+        },
+      };
+    },
+  };
+};

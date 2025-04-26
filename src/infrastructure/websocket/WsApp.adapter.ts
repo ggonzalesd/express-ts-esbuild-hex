@@ -1,5 +1,3 @@
-import { container, Lifecycle, singleton } from 'tsyringe';
-
 import { createServer } from 'http';
 import { Server } from 'ws';
 
@@ -12,14 +10,7 @@ import {
   WsMessageCallback,
   WsRequest,
 } from '@@app/ports/WsService.port';
-import { ADAPTER_WEB_SOCKET, PREFIX_ADAPTER_WS } from '@/constants';
-import { dependecyName } from '@/tools';
 
-const websockets: typeof ADAPTER_WEB_SOCKET = 'ws';
-
-const DEP_WS_APP = dependecyName(PREFIX_ADAPTER_WS, websockets);
-
-@singleton()
 export class WsAppAdapter<T = unknown> implements WsApplication {
   public readonly rooms: Map<string, Set<WsClient<T>>>;
 
@@ -209,13 +200,3 @@ export class WsAppAdapter<T = unknown> implements WsApplication {
     }
   }
 }
-
-container.register(
-  DEP_WS_APP,
-  {
-    useClass: WsAppAdapter,
-  },
-  {
-    lifecycle: Lifecycle.Singleton,
-  },
-);

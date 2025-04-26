@@ -1,34 +1,22 @@
-import { container, inject, singleton } from 'tsyringe';
-
 import fs from 'node:fs';
 import { createServer } from 'node:http';
+
 import express, { Express } from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
-
-import { dependecyName } from '@/tools';
-import { ADAPTER_ROUTING, DEP_CONFIG_ENV, PREFIX_ADAPTER_APP } from '@@const';
 
 import { type ConfigService } from '@@app/ports/ConfigService.port';
 import { type HttpApplication } from '@@app/ports/HttpService.port';
 
 import { ExpressRouterAdapter } from './ExpressRouter.adapter';
 
-const routing: typeof ADAPTER_ROUTING = 'express';
-
-const DEP_EXPRESS_APP_ROUTER = dependecyName(PREFIX_ADAPTER_APP, routing);
-
-@singleton()
 export class ExpressAppAdapter
   extends ExpressRouterAdapter
   implements HttpApplication
 {
   private expressApp: Express;
 
-  constructor(
-    @inject(DEP_CONFIG_ENV)
-    private config: ConfigService,
-  ) {
+  constructor(private config: ConfigService) {
     const app = express();
 
     super(app);
@@ -77,7 +65,3 @@ export class ExpressAppAdapter
     this.expressApp.enable(name);
   }
 }
-
-container.register(DEP_EXPRESS_APP_ROUTER, {
-  useClass: ExpressAppAdapter,
-});

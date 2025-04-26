@@ -1,11 +1,8 @@
 import path from 'node:path';
-import { container } from 'tsyringe';
-import { z } from 'zod';
 import dotenv from 'dotenv';
+import { z } from 'zod';
 
-import { DEP_CONFIG_ENV } from '@@const';
-
-import { ConfigService } from '@@app/ports/ConfigService.port';
+import type { ConfigService } from '@@app/ports/ConfigService.port';
 
 const filesnames = {
   development: '.env',
@@ -76,8 +73,5 @@ const envSchema = z
     };
   });
 
-const envConfig: ConfigService = envSchema.parse(process.env);
-
-container.register<ConfigService>(DEP_CONFIG_ENV, {
-  useValue: envConfig,
-});
+export const dotenvConfigFactory: () => ConfigService = () =>
+  envSchema.parse(process.env);
