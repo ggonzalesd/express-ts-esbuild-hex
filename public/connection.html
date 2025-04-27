@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+
+  <script>
+    // Connection to websocket server
+    const socket = new WebSocket('ws://192.168.1.6:8080/chat-room?username=Poggers');
+
+    socket.addEventListener('open', function (event) {
+      console.log('Connected to the WebSocket server');
+
+      socket.addEventListener('message', function (event) {
+        const message = JSON.parse(event.data);
+
+        if (!('event' in message && 'data' in message)) {
+          console.error('Invalid message format');
+          return;
+        }
+
+        console.log('Message from server ', message);
+      });
+
+      socket.addEventListener('close', function (event) {
+        console.log('Disconnected from the WebSocket server');
+      });
+
+      socket.addEventListener('error', function (error) {
+        console.error('WebSocket error: ', error);
+      });
+
+      socket.send(JSON.stringify({
+        event: 'send:message',
+        data: 'Hello, server!'
+      }));
+    });
+  </script>
+</body>
+
+</html>

@@ -1,4 +1,5 @@
 import {
+  EventPublisherService,
   EventSubscriptorService,
   WsApplication,
   WsClient,
@@ -12,14 +13,51 @@ export class WsApplicationService {
       username: string;
     }>,
     private subscriptor: EventSubscriptorService,
+    private publisher: EventPublisherService,
   ) {
     this.app.connection(this.onConnection.bind(this));
 
-    this.app.message('send:message', this.onSendMessage.bind(this));
+    this.app.message('send:message', this.onClientSendMessage.bind(this));
 
     this.app.close(this.handlerClose.bind(this));
 
-    this.subscriptor.sub('chats', this.onEventSendToChat.bind(this));
+    // this.subscriptor.sub('chats', this.onEventSendToChat.bind(this));
+    this.subscriptor.sub(
+      'chats:new-message',
+      this.onEventSendMessageToClients.bind(this),
+    );
+  }
+
+  onClientSendMessage(
+    ws: WsClient<{ username: string }>,
+    req: WsRequest,
+    message: unknown,
+  ) {
+    const room = ws.joins.values().next().value || null;
+
+    if (!room) {
+      ws.close(4000, 'Invalid room');
+      return;
+    }
+
+    this.publisher.pub(
+      'chats:new-message',
+      JSON.stringify({
+        room,
+        message: message + ' In SERVER ' + process.env.PORT,
+      }),
+    );
+  }
+
+  async onEventSendMessageToClients(data: string) {
+    const { room, message } = JSON.parse(data) as {
+      room: string;
+      message: string;
+    };
+
+    this.app.broadcast([room], 'receive:message', {
+      message,
+    });
   }
 
   async onEventSendToChat(data: string) {
@@ -28,12 +66,7 @@ export class WsApplicationService {
       message: string;
     };
 
-    this.app.broadcast([room], 'receive:message', {
-      message: {
-        username: 'System',
-        text: message,
-      },
-    });
+    this.publisher.pub('chats:new-message', JSON.stringify({ room, message }));
   }
 
   async onConnection(
@@ -51,19 +84,6 @@ export class WsApplicationService {
 
     ws.join(room);
     ws.context = { username };
-  }
-
-  onSendMessage(
-    ws: WsClient<{ username: string }>,
-    req: WsRequest,
-    message: unknown,
-  ) {
-    this.app.broadcast([...ws.joins], 'receive:message', {
-      message: {
-        username: ws.context?.username,
-        text: message,
-      },
-    });
   }
 
   handlerClose(ws: WsClient<{ username: string }>) {

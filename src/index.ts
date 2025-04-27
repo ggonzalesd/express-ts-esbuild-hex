@@ -69,6 +69,7 @@ async function main() {
     const websocketApplication = new WsApplicationService(
       wsApp,
       eventSubscriptor,
+      eventPublisher,
     );
 
     websocketApplication.app.attach(server);
