@@ -1,0 +1,24 @@
+import { User } from '@@core/entities';
+import { DataAccess } from '@@core/repositories';
+import { CoreError } from '@@core/errors';
+
+export class UserService {
+  constructor(private dataAccess: DataAccess) {}
+
+  async getAllUsers(): Promise<User[]> {
+    return await this.dataAccess.transaction(async () => {
+      const users = await this.dataAccess.user.findAll();
+      return users;
+    });
+  }
+
+  async getUserById(id: string): Promise<User> {
+    const user = await this.dataAccess.user.findById(id);
+
+    if (!user) {
+      throw CoreError.notFound(`User with id ${id} not found`);
+    }
+
+    return user;
+  }
+}

@@ -1,10 +1,10 @@
 /* eslint-disable no-console */
 import { Umzug } from 'umzug';
-import { GenericPool } from '@/domain/repositories/DataAccess.port';
+import { PoolClient } from '@/domain/repositories/DataAccess.port';
 
 interface Params {
-  context: GenericPool;
-  umzug: Umzug<GenericPool>;
+  context: PoolClient;
+  umzug: Umzug<PoolClient>;
 }
 
 export const run = async ({ context, umzug }: Params) => {

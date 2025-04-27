@@ -1,22 +1,17 @@
-import 'reflect-metadata';
-
 import path from 'node:path';
 import fs from 'node:fs';
 
 import { Umzug } from 'umzug';
-import { container } from 'tsyringe';
-
-import { DEP_CONFIG_ENV } from '@@const';
-
-import { type GenericPool } from '@/domain/repositories/DataAccess.port';
-import { type ConfigService } from '@/application/ports/ConfigService.port';
-
-import '@@infra/environment/dotenv.config';
-import '@@infra/database/psql/PsqlDataAccess';
 
 import { getContext, getStorage, run } from './lib';
 
-const envConfig = container.resolve<ConfigService>(DEP_CONFIG_ENV);
+import { PoolClient } from '@@core/repositories/DataAccess.port';
+
+import { type ConfigService } from '@@app/ports/ConfigService.port';
+
+import { dotenvConfigFactory } from '@@infra/environment/dotenv.config';
+
+const envConfig: ConfigService = dotenvConfigFactory();
 
 async function start() {
   // #region Get context from the container
@@ -36,7 +31,7 @@ async function start() {
   const storage = getStorage();
   // #endregion
 
-  const umzug = new Umzug<GenericPool>({
+  const umzug = new Umzug<PoolClient>({
     migrations: {
       glob: path.join(migrationFolder, '*.*.*T*.*.*.*.ts'),
     },

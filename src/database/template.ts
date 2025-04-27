@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { type MigrationFn } from 'umzug';
-import { type GenericPool } from '@/domain/repositories/DataAccess.port';
+import { type PoolQuery } from '@/domain/repositories/DataAccess.port';
 
-export const up: MigrationFn<GenericPool> = async (params) => {
+export const up: MigrationFn<PoolQuery> = async (params) => {
   const {
     context: { query },
   } = params;
 };
 
-export const down: MigrationFn<GenericPool> = async (params) => {
+export const down: MigrationFn<PoolQuery> = async (params) => {
   const {
     context: { query },
   } = params;

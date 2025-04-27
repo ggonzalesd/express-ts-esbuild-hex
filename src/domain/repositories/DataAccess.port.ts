@@ -1,8 +1,7 @@
-import { type UserRepository } from './UserRepository.port';
-import { type ProductRepository } from './ProductRepository.port';
+import { type UserRepository } from '.';
 
 export interface PoolQuery {
-  query: <T>(sql: string, ...values: unknown[]) => Promise<T>;
+  query: <T>(sql: string, ...values: unknown[]) => Promise<T[]>;
 }
 
 export interface PoolConnection extends PoolQuery {
@@ -20,7 +19,6 @@ export interface DataAccess {
   pool: PoolClient;
 
   user: UserRepository;
-  product: ProductRepository;
 
   transaction: <T>(fn: (ctx: PoolQuery) => Promise<T>) => Promise<T>;
 }

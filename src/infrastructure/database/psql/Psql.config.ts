@@ -11,20 +11,16 @@ export const psqlPoolFactory: (envConfig: ConfigService) => PoolClient = (
   envConfig: ConfigService,
 ) => {
   const pool = new PgPool({
-    host: envConfig.DB_HOST,
-    port: envConfig.DB_PORT,
-    user: envConfig.DB_USER,
-    password: envConfig.DB_PASS,
-    database: envConfig.DB_NAME,
+    // String connection
+    connectionString: envConfig.DB_CONNECTION_STRING,
     max: envConfig.DB_CONNECTION_POOL_MAX,
   });
 
   const queryFactory =
     (client: PgPool | PgPoolClient) =>
-    async <T>(sql: string, ...values: unknown[]): Promise<T> => {
-      // TODO complete the query with the correct type
-      client.query(sql, values);
-      return null as unknown as T;
+    async <T>(sql: string, ...values: unknown[]): Promise<T[]> => {
+      const response = await client.query(sql, values);
+      return response.rows as unknown as T[];
     };
 
   return {

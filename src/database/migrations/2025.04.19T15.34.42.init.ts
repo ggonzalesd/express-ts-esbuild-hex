@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 import { type MigrationFn } from 'umzug';
-import { type GenericPool } from '@/domain/repositories/DataAccess.port';
+import { type PoolQuery } from '@@core/repositories/DataAccess.port';
 
-export const up: MigrationFn<GenericPool> = async (params) => {
+export const up: MigrationFn<PoolQuery> = async (params) => {
   const {
     context: { query },
   } = params;
@@ -24,7 +24,7 @@ export const up: MigrationFn<GenericPool> = async (params) => {
     role user_role DEFAULT 'user',
     state user_state DEFAULT 'active',
 
-    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    createdAt TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "users_pkey" PRIMARY KEY (id),
     CONSTRAINT "users_email_key" UNIQUE (email),
@@ -34,7 +34,7 @@ export const up: MigrationFn<GenericPool> = async (params) => {
   console.log('✅ users table created');
 };
 
-export const down: MigrationFn<GenericPool> = async (params) => {
+export const down: MigrationFn<PoolQuery> = async (params) => {
   const {
     context: { query },
   } = params;

@@ -1,24 +1,27 @@
-import { HttpApplication, HttpRouter } from './ports/HttpService.port';
-import { ProductRouter } from './route/Product.router';
+import {
+  HttpApplication,
+  HttpRequest,
+  HttpResponse,
+  HttpRouter,
+} from './ports/HttpService.port';
 import { EventPublisherService } from './ports/EventService.port';
+import { UserRouter } from './route';
+import { DataAccess } from '@@core/repositories';
 
 export class RestApplicationService {
-  private productRouter: ProductRouter;
+  private userRouter: UserRouter;
 
   constructor(
     public app: HttpApplication,
     public routerFactory: () => HttpRouter,
     public publisher: EventPublisherService,
+    public dataAccess: DataAccess,
   ) {
-    this.productRouter = new ProductRouter(routerFactory);
+    this.userRouter = new UserRouter(routerFactory, dataAccess);
 
-    this.app.handler('GET /health', (req, res) => {
-      res.json({
-        message: 'OK',
-      });
-    });
+    this.app.handler('GET /health', this.healthCheck.bind(this));
 
-    this.app.handler('USE /api/v1/products', this.productRouter.router);
+    this.app.handler('USE /api/v1/users', this.userRouter.router);
 
     this.app.handler('GET /api/v1/send/:room', async (req, res) => {
       const room = req.params.room;
@@ -46,6 +49,12 @@ export class RestApplicationService {
         message: 'Not Found',
         body: null,
       });
+    });
+  }
+
+  private async healthCheck(_: HttpRequest, res: HttpResponse) {
+    res.json({
+      message: 'OK',
     });
   }
 }

@@ -1,4 +1,4 @@
-import {
+import express, {
   Router,
   type NextFunction,
   type Request,
@@ -76,8 +76,6 @@ export class ExpressRouterAdapter implements HttpRouter {
     };
   }
 
-  s = 0;
-
   handler: HttpHandler = (options, ...handlers) => {
     const ops = options ?? 'USE';
 
@@ -105,3 +103,6 @@ export class ExpressRouterAdapter implements HttpRouter {
     }
   };
 }
+
+export const expreeRouterFactory: () => HttpRouter = () =>
+  new ExpressRouterAdapter(express.Router());

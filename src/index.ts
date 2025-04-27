@@ -1,7 +1,6 @@
 import { createServer } from 'http';
 
-import { createClient } from 'redis';
-import express from 'express';
+import { DataAccess } from '@@core/repositories';
 
 import {
   ConfigService,
@@ -9,7 +8,6 @@ import {
   EventPublisherService,
   EventSubscriptorService,
   WsApplication,
-  HttpRouter,
 } from '@@app/ports';
 
 import { RestApplicationService } from '@@app/rest.service';
@@ -18,26 +16,24 @@ import { WsApplicationService } from '@@app/ws.service';
 import { dotenvConfigFactory } from '@@infra/environment';
 
 import {
+  redisConnectionFactory,
   RedisEventPublisherAdapter,
   RedisEventSubscriptorAdapter,
 } from '@@infra/event';
 
-import { ExpressAppAdapter, ExpressRouterAdapter } from '@@infra/router';
+import { expreeRouterFactory, ExpressAppAdapter } from '@@infra/router';
 import { WsAppAdapter } from '@@infra/websocket';
+import { PsqlDataAccess } from '@@infra/database/psql';
 
 async function main() {
   // * Load Environment Variables
   const envConfig: ConfigService = dotenvConfigFactory();
 
+  // * DataAccess Configuration
+  const dataAccess: DataAccess = new PsqlDataAccess(envConfig);
+
   // * Redis Configuration
-  const redis = createClient({
-    url: 'redis://localhost:6379',
-  });
-  await redis.connect();
-  const redisSub = redis.duplicate();
-  await redisSub.connect();
-  const redisPub = redis.duplicate();
-  await redisPub.connect();
+  const { redisSub, redisPub } = await redisConnectionFactory(envConfig);
   const eventSubscriptor: EventSubscriptorService =
     new RedisEventSubscriptorAdapter(redisSub);
   const eventPublisher: EventPublisherService = new RedisEventPublisherAdapter(
@@ -51,13 +47,11 @@ async function main() {
   {
     const httpApp: HttpApplication = new ExpressAppAdapter(envConfig);
 
-    const routerFactory: () => HttpRouter = () =>
-      new ExpressRouterAdapter(express.Router());
-
     const restApplication = new RestApplicationService(
       httpApp,
-      routerFactory,
+      expreeRouterFactory,
       eventPublisher,
+      dataAccess,
     );
 
     restApplication.app.attach(server);
