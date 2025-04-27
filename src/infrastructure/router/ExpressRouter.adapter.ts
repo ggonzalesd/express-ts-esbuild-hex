@@ -24,7 +24,7 @@ export class ExpressRouterAdapter implements HttpRouter {
     this.expressRouter = router;
   }
 
-  private static requestAdapter(req: Request): HttpRequest {
+  public static requestAdapter(req: Request): HttpRequest {
     return {
       method: req.method,
       body: req.body,
@@ -37,7 +37,7 @@ export class ExpressRouterAdapter implements HttpRouter {
     };
   }
 
-  private static responseAdapter(res: Response): HttpResponse {
+  public static responseAdapter(res: Response): HttpResponse {
     return {
       json: (data: unknown) => res.json(data),
       send: (data: unknown) => res.send(data),

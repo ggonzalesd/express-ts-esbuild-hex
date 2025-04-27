@@ -14,6 +14,7 @@
     "migrate:executed": "node dist/umzug.client.js executed",
     "migrate:help": "node dist/umzug.client.js",
     "migrate:create": "node dist/umzug.client.js create",
+    "migrate:start": "node dist/umzug.client.js start",
     "migrate:build": "ENTRY=./src/database/umzug.client.ts node esbuild.config.mjs"
   },
   "license": "ISC",

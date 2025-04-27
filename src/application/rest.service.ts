@@ -1,12 +1,14 @@
+import { DataAccess } from '@@core/repositories';
+
 import {
   HttpApplication,
+  HttpErrorCallback,
   HttpRequest,
   HttpResponse,
   HttpRouter,
 } from './ports/HttpService.port';
 import { EventPublisherService } from './ports/EventService.port';
 import { UserRouter } from './route';
-import { DataAccess } from '@@core/repositories';
 
 export class RestApplicationService {
   private userRouter: UserRouter;
@@ -14,6 +16,7 @@ export class RestApplicationService {
   constructor(
     public app: HttpApplication,
     public routerFactory: () => HttpRouter,
+    public handlerFactory: () => HttpErrorCallback,
     public publisher: EventPublisherService,
     public dataAccess: DataAccess,
   ) {
@@ -43,18 +46,22 @@ export class RestApplicationService {
       });
     });
 
-    this.app.handler('USE', (req, res) => {
-      res.status(404).json({
-        ok: false,
-        message: 'Not Found',
-        body: null,
-      });
+    this.app.handler('USE', this.notFound.bind(this));
+
+    this.app.error(this.handlerFactory());
+  }
+
+  private async notFound(req: HttpRequest, res: HttpResponse) {
+    res.status(404).json({
+      ok: false,
+      status: 404,
+      message: 'Not Found',
+      body: null,
     });
   }
 
   private async healthCheck(_: HttpRequest, res: HttpResponse) {
-    res.json({
-      message: 'OK',
-    });
+    const healthText = 'Service running';
+    res.send(healthText);
   }
 }

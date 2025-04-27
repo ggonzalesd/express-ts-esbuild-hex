@@ -13,6 +13,11 @@ export interface ConfigService {
 
   BCRYPT_SALT: number;
 
+  DB_USER: string;
+  DB_PASS: string;
+  DB_HOST: string;
+  DB_PORT: number;
+  DB_NAME: string;
   DB_CONNECTION_STRING: string;
   DB_DIALECT: 'postgres' | 'mysql' | 'sqlite';
   DB_CONNECTION_POOL_MAX: number;
@@ -28,4 +33,7 @@ export interface ConfigService {
   LOGGER_FILE: string;
 
   EVENT_CONNECTION: string;
+  EVENT_PASSWORD: string;
+
+  STATIC_DIR: string;
 }

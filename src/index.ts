@@ -21,7 +21,11 @@ import {
   RedisEventSubscriptorAdapter,
 } from '@@infra/event';
 
-import { expreeRouterFactory, ExpressAppAdapter } from '@@infra/router';
+import {
+  expreeRouterFactory,
+  errorHandlerFactory,
+  ExpressAppAdapter,
+} from '@@infra/router';
 import { WsAppAdapter } from '@@infra/websocket';
 import { PsqlDataAccess } from '@@infra/database/psql';
 
@@ -50,6 +54,7 @@ async function main() {
     const restApplication = new RestApplicationService(
       httpApp,
       expreeRouterFactory,
+      errorHandlerFactory,
       eventPublisher,
       dataAccess,
     );

@@ -58,6 +58,13 @@ export type HttpCallback = (
   next: HttpNext,
 ) => void | Promise<void>;
 
+export type HttpErrorCallback = (
+  err: unknown,
+  req: HttpRequest,
+  res: HttpResponse,
+  next: HttpNext,
+) => void | Promise<void>;
+
 export type HttpHandler<T = HttpCallback | HttpRouter> = (
   option?: HttpEndPoint,
   ...handlers: Array<T>
@@ -73,4 +80,5 @@ export interface HttpApplication extends HttpRouter {
   disable: (path: string) => void;
   enable: (path: string) => void;
   attach: (server: ReturnType<typeof createServer>) => void;
+  error: (handler: HttpErrorCallback) => void;
 }

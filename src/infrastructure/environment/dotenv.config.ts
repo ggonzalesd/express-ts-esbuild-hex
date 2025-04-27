@@ -42,9 +42,11 @@ const envSchema = z
 
     BCRYPT_SALT: z.string().regex(/^\d+$/).default('10').transform(Number),
 
-    DB_CONNECTION_STRING: z
-      .string()
-      .default('postgres://user:password@localhost:5432/database'),
+    DB_USER: z.string().default('user'),
+    DB_PASS: z.string().default('password'),
+    DB_HOST: z.string().default('localhost'),
+    DB_PORT: z.string().regex(/^\d+$/).default('5432').transform(Number),
+    DB_NAME: z.string().default('database'),
     DB_DIALECT: z.enum(['postgres', 'mysql', 'sqlite']).default('postgres'),
     DB_CONNECTION_POOL_MAX: z
       .string()
@@ -58,6 +60,9 @@ const envSchema = z
     LOGGER_FILE: z.string().default('~/logs.log'),
 
     EVENT_CONNECTION: z.string().default('redis://localhost:6379'),
+    EVENT_PASSWORD: z.string().default('your_redis_password'),
+
+    STATIC_DIR: z.string().default('public'),
   })
   .transform((env) => {
     const API_BASE = [env.API_PREFIX, env.API_VERSION]
@@ -66,6 +71,7 @@ const envSchema = z
     return {
       API_BASE: API_BASE ? `/${API_BASE}` : '',
       API_URL: `${env.PROTOCOL}://${env.HOST}:${env.PORT}/${[env.API_PREFIX, env.API_VERSION].filter(Boolean).join('/')}`,
+      DB_CONNECTION_STRING: `${env.DB_DIALECT}://${env.DB_USER}:${env.DB_PASS}@${env.DB_HOST}:${env.DB_PORT}/${env.DB_NAME}`,
       IS_PRODUCTION: env.NODE_ENV === 'production',
       IS_DEVELOPMENT: env.NODE_ENV === 'development',
       ...env,

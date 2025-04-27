@@ -1,12 +1,15 @@
 import fs from 'node:fs';
 import { createServer } from 'node:http';
 
-import express, { Express } from 'express';
+import express, { Express, Request, Response, NextFunction } from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
 
 import { type ConfigService } from '@@app/ports/ConfigService.port';
-import { type HttpApplication } from '@@app/ports/HttpService.port';
+import {
+  type HttpErrorCallback,
+  type HttpApplication,
+} from '@@app/ports/HttpService.port';
 
 import { ExpressRouterAdapter } from './ExpressRouter.adapter';
 
@@ -44,8 +47,24 @@ export class ExpressAppAdapter
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
 
-    app.use(
-      express.static('/home/archiso/dev/node/express-typescript/v01/public'),
+    if (this.config.STATIC_DIR) {
+      app.use(express.static(this.config.STATIC_DIR));
+    }
+  }
+
+  public error(handler: HttpErrorCallback) {
+    this.expressApp.use(
+      (err: unknown, req: Request, res: Response, next: NextFunction) => {
+        const request = ExpressAppAdapter.requestAdapter(req);
+        const response = ExpressAppAdapter.responseAdapter(res);
+        const nextFunction = (error?: unknown) => {
+          if (error) {
+            return next(error);
+          }
+          return next();
+        };
+        handler(err, request, response, nextFunction);
+      },
     );
   }
 

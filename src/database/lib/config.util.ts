@@ -34,10 +34,10 @@ export const getStorage = (): UmzugStorage<PoolClient> => ({
     return response.map((migration) => migration.name);
   },
   logMigration: async ({ name, context }) => {
-    await context.query('INSERT INTO __migrations (name) VALUES ($1)', [name]);
+    await context.query('INSERT INTO __migrations (name) VALUES ($1)', name);
   },
   unlogMigration: async ({ name, context }) => {
-    await context.query('DELETE FROM __migrations WHERE name = $1', [name]);
+    await context.query('DELETE FROM __migrations WHERE name = $1', name);
   },
 });
 

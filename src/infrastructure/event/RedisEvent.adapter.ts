@@ -30,6 +30,7 @@ export const redisConnectionFactory = async (configService: ConfigService) => {
   try {
     const redis = createClient({
       url: configService.EVENT_CONNECTION,
+      password: configService.EVENT_PASSWORD,
     });
     await redis.connect();
 
