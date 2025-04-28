@@ -6,6 +6,7 @@ import {
   authLoginPayloadSchema,
   authLoginRequestSchema,
   authRegisterRequestSchema,
+  verifyEmailQuerySchema,
 } from '@@app/schemas/auth.schema';
 
 import { AuthService } from '@@app/services/Auth.service';
@@ -24,11 +25,23 @@ export class AuthRouter {
   ) {
     router.handler('POST /login', this.loginRouter.bind(this));
     router.handler('POST /register', this.registerRouter.bind(this));
+    router.handler('GET /verify-email', this.verifyEmailRouter.bind(this));
     router.handler(
       'GET /profile',
       authMiddleware.authenticated,
       this.profileRouter.bind(this),
     );
+  }
+
+  async verifyEmailRouter(req: HttpRequest, res: HttpResponse) {
+    const { id, token } = verifyEmailQuerySchema.parse(req.query);
+
+    await this.authService.verifyEmail(id, token);
+
+    return res.status(HttpCodes.OK).json({
+      status: 'success',
+      message: 'Email verified successfully',
+    });
   }
 
   async profileRouter(req: HttpRequest, res: HttpResponse) {

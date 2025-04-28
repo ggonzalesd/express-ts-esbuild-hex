@@ -38,6 +38,8 @@ const envSchema = z
     HOST: z.string().default('localhost'),
     PORT: z.string().regex(/^\d+$/).default('3000').transform(Number),
 
+    API_URL: z.string().default('http://localhost:3000'),
+
     API_PREFIX: z.string().default('api'),
     API_VERSION: z.string().default('v1'),
 
@@ -83,7 +85,6 @@ const envSchema = z
       .join('/');
     return {
       API_BASE: API_BASE ? `/${API_BASE}` : '',
-      API_URL: `${env.PROTOCOL}://${env.HOST}:${env.PORT}/${[env.API_PREFIX, env.API_VERSION].filter(Boolean).join('/')}`,
       DB_CONNECTION_STRING: `${env.DB_DIALECT}://${env.DB_USER}:${env.DB_PASS}@${env.DB_HOST}:${env.DB_PORT}/${env.DB_NAME}`,
       IS_PRODUCTION: env.NODE_ENV === 'production',
       IS_DEVELOPMENT: env.NODE_ENV === 'development',

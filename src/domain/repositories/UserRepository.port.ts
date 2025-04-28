@@ -9,4 +9,5 @@ export interface UserRepository {
   findByUsername(username: string, ctx?: PoolQuery): Promise<User | null>;
 
   create(user: User, ctx?: PoolQuery): Promise<User | null>;
+  update(user: User, ctx?: PoolQuery): Promise<User | null>;
 }

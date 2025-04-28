@@ -51,3 +51,8 @@ export const bearerTokenSchema = z.object({
     .string()
     .regex(/^Bearer [a-zA-Z0-9-_.]+$/, 'Bearer token required'),
 });
+
+export const verifyEmailQuerySchema = z.object({
+  token: z.string().uuid(),
+  id: z.string().uuid(),
+});

@@ -11,7 +11,8 @@ export interface UserProps {
   verified?: boolean;
   role?: UserRoles;
   state?: UserStates;
-  createdAt?: Date;
+  createdat?: Date;
+  verifyemailtoken?: string | null;
 }
 
 export class User implements UserProps {
@@ -23,7 +24,8 @@ export class User implements UserProps {
   readonly verified: boolean;
   readonly role: UserRoles;
   readonly state: UserStates;
-  readonly createdAt?: Date;
+  readonly createdat?: Date;
+  readonly verifyemailtoken?: string | null;
 
   constructor(props: UserProps) {
     this.validateProps(props);
@@ -41,8 +43,11 @@ export class User implements UserProps {
     if (props.id) {
       this.id = props.id;
     }
-    if (props.createdAt) {
-      this.createdAt = props.createdAt;
+    if (props.createdat) {
+      this.createdat = props.createdat;
+    }
+    if (props.verifyemailtoken) {
+      this.verifyemailtoken = props.verifyemailtoken;
     }
   }
 
@@ -53,10 +58,11 @@ export class User implements UserProps {
     });
   }
 
-  withVerified(verified: boolean) {
+  public withVerified(verified: boolean, verifyemailtoken?: string | null) {
     return new User({
       ...this,
       verified,
+      verifyemailtoken,
     });
   }
 
@@ -99,7 +105,7 @@ export class User implements UserProps {
       );
     }
 
-    if (extra.createdAt && !(extra.createdAt instanceof Date)) {
+    if (extra.createdat && !(extra.createdat instanceof Date)) {
       throw CoreError.badRequest('CreatedAt must be a date');
     }
   }

@@ -5,6 +5,8 @@ export interface ConfigService {
   HOST: string;
   PORT: number;
 
+  API_URL: string;
+
   API_PREFIX: string;
   API_VERSION: string;
 
@@ -35,7 +37,6 @@ export interface ConfigService {
   MIGRATE_FOLDER: string;
 
   API_BASE: string;
-  API_URL: string;
   IS_PRODUCTION: boolean;
   IS_DEVELOPMENT: boolean;
 

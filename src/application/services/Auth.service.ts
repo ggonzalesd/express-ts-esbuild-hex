@@ -7,13 +7,15 @@ import { UserRoles } from '@@core/entities';
 import { CoreError } from '@@core/errors';
 
 import { UserService } from './User.service';
-import { DEP_ENVIRONMENT } from '@@const/injection.enum';
+import { DEP_DB, DEP_ENVIRONMENT } from '@@const/injection.enum';
 import { ConfigService } from '@@app/ports';
+import { DataAccess } from '@@core/repositories';
 
 @injectable()
 export class AuthService {
   constructor(
     @inject(DEP_ENVIRONMENT) private configService: ConfigService,
+    @inject(DEP_DB) private dataAccess: DataAccess,
     @inject(UserService) private userService: UserService,
   ) {}
 
@@ -28,8 +30,30 @@ export class AuthService {
       verified: user.verified,
       role: user.role,
       state: user.state,
-      createdAt: user.createdAt,
+      createdat: user.createdat,
     };
+  }
+
+  public async verifyEmail(userId: string, token: string) {
+    await this.dataAccess.transaction(async (ctx, access) => {
+      const user = await access.user.findById(userId, ctx);
+
+      if (!user) {
+        throw CoreError.notFound('User not found');
+      }
+
+      if (user.verifyemailtoken == null) {
+        throw CoreError.unauthorized('Token not found');
+      }
+
+      if (token !== user.verifyemailtoken) {
+        throw CoreError.unauthorized('Invalid token');
+      }
+
+      const updatedUser = user.withVerified(true, null);
+
+      await access.user.update(updatedUser, ctx);
+    });
   }
 
   public async login(email: string, password: string): Promise<string> {

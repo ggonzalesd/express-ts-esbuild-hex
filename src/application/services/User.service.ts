@@ -6,13 +6,14 @@ import { User, UserProps } from '@@core/entities';
 import { DataAccess } from '@@core/repositories';
 import { CoreError } from '@@core/errors';
 
-import { DEP_DB, DEP_EMAIL } from '@@const/injection.enum';
-import { EmailService } from '@@app/ports';
+import { DEP_DB, DEP_ENVIRONMENT } from '@@const/injection.enum';
+import { ConfigService } from '@@app/ports';
 import { MailerService } from './Mailer.service';
 
 @injectable()
 export class UserService {
   constructor(
+    @inject(DEP_ENVIRONMENT) private configService: ConfigService,
     @inject(DEP_DB) private dataAccess: DataAccess,
     @inject(MailerService) private emailService: MailerService,
   ) {}
@@ -58,11 +59,6 @@ export class UserService {
 
       const userEmail = await access.user.findByEmail(userProps.email, client);
       if (userEmail) {
-        // // TODO: Alert user, someone is trying to register with an existing email
-        // example: mailer.send(userProps.email, 'Someone is trying to register with your email');
-        // example: event.emit('user.register', { email: userProps.email });
-        // console.log('Someone is trying to register with an existing email');
-
         cancel();
 
         return {
@@ -75,10 +71,18 @@ export class UserService {
         };
       }
 
+      const verifyemailtoken = crypto.randomUUID();
+      console.log({ verifyemailtoken });
       const hashedPassword = await bcrypt.hash(userProps.password, 10);
-      const newUser = new User({ ...userProps, password: hashedPassword });
+      const newUser = new User({
+        ...userProps,
+        password: hashedPassword,
+        verifyemailtoken,
+      });
+      console.log({ newUser });
 
       const createdUser = await access.user.create(newUser, client);
+      console.log({ createdUser });
       if (!createdUser) {
         throw CoreError.internalServerError(
           `Unexpected Error creating user with email ${userProps.email}`,
@@ -86,8 +90,18 @@ export class UserService {
       }
 
       // TODO: Send confirmation email
-      // example: mailer.send(userProps.email, 'Please confirm your email');
-      this.emailService.verifyEmail(createdUser.email, createdUser.username);
+      const params = new URLSearchParams({
+        id: createdUser.id!,
+        token: verifyemailtoken,
+      }).toString();
+
+      const url =
+        this.configService.API_URL +
+        this.configService.API_BASE +
+        '/auth/verify-email?' +
+        params;
+
+      this.emailService.verifyEmail(createdUser.email, url);
 
       return {
         message: 'If email is valid, you will receive a confirmation email',
