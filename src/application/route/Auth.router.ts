@@ -3,6 +3,7 @@ import { inject, injectable } from 'tsyringe';
 import { HttpRequest, HttpResponse, HttpRouter } from '@@app/ports';
 
 import {
+  authLoginPayloadSchema,
   authLoginRequestSchema,
   authRegisterRequestSchema,
 } from '@@app/schemas/auth.schema';
@@ -11,21 +12,49 @@ import { AuthService } from '@@app/services/Auth.service';
 
 import { DEP_ROUTING_ROUTER } from '@@const/injection.enum';
 import { HttpCodes } from '@@const/http.enum';
+import { AuthMiddleware } from '@@app/middlewares/Auth.middleware';
+import { ConstKeys } from '@@const/keys.enum';
 
 @injectable()
 export class AuthRouter {
   constructor(
     @inject(DEP_ROUTING_ROUTER) public router: HttpRouter,
     @inject(AuthService) private authService: AuthService,
+    @inject(AuthMiddleware) authMiddleware: AuthMiddleware,
   ) {
     router.handler('POST /login', this.loginRouter.bind(this));
     router.handler('POST /register', this.registerRouter.bind(this));
+    router.handler(
+      'GET /profile',
+      authMiddleware.authenticated,
+      this.profileRouter.bind(this),
+    );
+  }
+
+  async profileRouter(req: HttpRequest, res: HttpResponse) {
+    const { id } = authLoginPayloadSchema.parse(req.getUser());
+
+    const user = await this.authService.profile(id);
+
+    return res.status(HttpCodes.OK).json({
+      status: 'success',
+      message: 'Profile retrieved successfully',
+      data: user,
+    });
   }
 
   async loginRouter(req: HttpRequest, res: HttpResponse) {
-    const { email, password } = authLoginRequestSchema.parse(req.body);
+    const { email, password } = authLoginRequestSchema.parse(req.getBody());
 
     const token = await this.authService.login(email, password);
+
+    res.setCookie(ConstKeys.COOKIE_TOKEN, token, {
+      httpOnly: true,
+      maxAge: 60 * 60 * 24 * 7, // 1 week
+      secure: true, // Set to true if using HTTPS
+      sameSite: 'lax', // Set to 'Strict' or 'Lax' based on your needs
+      path: '/',
+    });
 
     return res.status(HttpCodes.OK).json({
       status: 'success',
@@ -36,7 +65,7 @@ export class AuthRouter {
 
   async registerRouter(req: HttpRequest, res: HttpResponse) {
     const { email, password, display, username } =
-      authRegisterRequestSchema.parse(req.body);
+      authRegisterRequestSchema.parse(req.getBody());
 
     const result = await this.authService.register(
       email,

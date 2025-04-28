@@ -17,6 +17,21 @@ export class AuthService {
     @inject(UserService) private userService: UserService,
   ) {}
 
+  public async profile(userId: string) {
+    const user = (await this.userService.getUserById(userId))!;
+
+    return {
+      id: user.id,
+      email: user.email,
+      display: user.display,
+      username: user.username,
+      verified: user.verified,
+      role: user.role,
+      state: user.state,
+      createdAt: user.createdAt,
+    };
+  }
+
   public async login(email: string, password: string): Promise<string> {
     const user = await this.userService.getUserByEmail(email, false);
 
@@ -59,9 +74,9 @@ export class AuthService {
     });
   }
 
-  public generateToken(userId: string, rol: UserRoles): string {
-    const token = jwt.sign({ id: userId, rol }, this.configService.JWT_SECRET, {
-      expiresIn: '1h',
+  public generateToken(id: string, role: UserRoles): string {
+    const token = jwt.sign({ id, role }, this.configService.JWT_SECRET, {
+      expiresIn: 1 * 60 * 60,
     });
 
     return token;

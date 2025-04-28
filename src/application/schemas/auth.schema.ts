@@ -45,3 +45,9 @@ export const authRegisterRequestSchema = z
     ...data,
     display: data.display || data.username,
   }));
+
+export const bearerTokenSchema = z.object({
+  authorization: z
+    .string()
+    .regex(/^Bearer [a-zA-Z0-9-_.]+$/, 'Bearer token required'),
+});

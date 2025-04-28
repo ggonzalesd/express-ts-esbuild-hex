@@ -16,6 +16,8 @@ import {
   DEP_ROUTING_APP,
 } from '@@const/injection.enum';
 import { AuthRouter } from './route/Auth.router';
+import { AuthMiddleware } from './middlewares/Auth.middleware';
+import { UserRoles } from '@@core/entities';
 
 @injectable()
 export class RestApplicationBootstrap {
@@ -24,12 +26,18 @@ export class RestApplicationBootstrap {
     @inject(AuthRouter) private authRouter: AuthRouter,
     @inject(UserRouter) private userRouter: UserRouter,
     @inject(DEP_ERROR_HANDLER) errorHandler: HttpErrorCallback,
+    @inject(AuthMiddleware) private authMiddleware: AuthMiddleware,
     @inject(DEP_EVENT_PUB) publisher: EventPublisherService,
   ) {
     this.app.handler('GET /health', this.healthCheck.bind(this));
 
     this.app.handler('USE /api/v1/auth', this.authRouter.router);
-    this.app.handler('USE /api/v1/users', this.userRouter.router);
+    this.app.handler(
+      'USE /api/v1/users',
+      authMiddleware.authenticated,
+      authMiddleware.withRoles([UserRoles.ADMIN]),
+      this.userRouter.router,
+    );
 
     this.app.handler('GET /api/v1/send/:room', async (req, res) => {
       const room = req.params.room;
