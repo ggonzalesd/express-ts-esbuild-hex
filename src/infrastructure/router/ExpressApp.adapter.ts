@@ -1,3 +1,5 @@
+import { container } from 'tsyringe';
+
 import fs from 'node:fs';
 import { createServer } from 'node:http';
 
@@ -12,6 +14,9 @@ import {
 } from '@@app/ports/HttpService.port';
 
 import { ExpressRouterAdapter } from './ExpressRouter.adapter';
+
+import { DepRoutingApp } from '@@const/dependencies.enum';
+import { DEP_ENVIRONMENT } from '@@const/injection.enum';
 
 export class ExpressAppAdapter
   extends ExpressRouterAdapter
@@ -84,3 +89,9 @@ export class ExpressAppAdapter
     this.expressApp.enable(name);
   }
 }
+
+container.register<HttpApplication>(DepRoutingApp.EXPRESS, {
+  useValue: new ExpressAppAdapter(
+    container.resolve<ConfigService>(DEP_ENVIRONMENT),
+  ),
+});

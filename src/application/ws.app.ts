@@ -1,3 +1,5 @@
+import { inject, injectable } from 'tsyringe';
+
 import {
   EventPublisherService,
   EventSubscriptorService,
@@ -5,15 +7,23 @@ import {
   WsClient,
   WsRequest,
   WsStop,
-} from './ports/';
+} from './ports';
 
-export class WsApplicationService {
+import {
+  DEP_EVENT_PUB,
+  DEP_EVENT_SUB,
+  DEP_WEBSOCKET,
+} from '@@const/injection.enum';
+
+@injectable()
+export class WebsocketApplicationBootstrap {
   constructor(
+    @inject(DEP_WEBSOCKET)
     public app: WsApplication<{
       username: string;
     }>,
-    private subscriptor: EventSubscriptorService,
-    private publisher: EventPublisherService,
+    @inject(DEP_EVENT_SUB) private subscriptor: EventSubscriptorService,
+    @inject(DEP_EVENT_PUB) private publisher: EventPublisherService,
   ) {
     this.app.connection(this.onConnection.bind(this));
 

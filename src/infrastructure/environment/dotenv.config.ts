@@ -1,6 +1,10 @@
+import { container } from 'tsyringe';
+
 import path from 'node:path';
 import dotenv from 'dotenv';
 import { z } from 'zod';
+
+import { DepEnvironment } from '@@const/dependencies.enum';
 
 import type { ConfigService } from '@@app/ports/ConfigService.port';
 
@@ -54,6 +58,12 @@ const envSchema = z
       .default('4')
       .transform(Number),
 
+    SMTP_HOST: z.string().default('localhost'),
+    SMTP_PORT: z.string().regex(/^\d+$/).default('1025').transform(Number),
+    SMTP_USER: z.string().default(''),
+    SMTP_PASS: z.string().default(''),
+    SMTP_SECURE: z.enum(['tls', 'ssl', 'false']).default('false'),
+
     MIGRATE_TEMPLATE: z.string().default('template.ts'),
     MIGRATE_FOLDER: z.string().default('migrations'),
 
@@ -78,5 +88,6 @@ const envSchema = z
     };
   });
 
-export const dotenvConfigFactory: () => ConfigService = () =>
-  envSchema.parse(process.env);
+container.register<ConfigService>(DepEnvironment.DOTENV, {
+  useValue: envSchema.parse(process.env),
+});

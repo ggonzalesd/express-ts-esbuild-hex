@@ -1,3 +1,7 @@
+import { inject, injectable } from 'tsyringe';
+
+import { DEP_PSQL_POOL_FACTORY } from './Psql.config';
+
 import { User } from '@@core/entities';
 
 import type {
@@ -6,8 +10,9 @@ import type {
   PoolQuery,
 } from '@@core/repositories';
 
+@injectable()
 export class PsqlUserDB implements UserRepository {
-  constructor(private client: PoolClient) {}
+  constructor(@inject(DEP_PSQL_POOL_FACTORY) private client: PoolClient) {}
 
   async findAll(ctx?: PoolQuery): Promise<User[]> {
     const client = ctx ?? this.client;

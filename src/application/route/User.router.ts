@@ -1,22 +1,18 @@
+import { inject, injectable } from 'tsyringe';
+
 import { CoreError } from '@@core/errors';
 
 import { HttpRequest, HttpResponse, HttpRouter } from '@@app/ports';
 import { UserService } from '@@app/services';
-import { DataAccess } from '@@core/repositories';
 
+import { DEP_ROUTING_ROUTER } from '@@const/injection.enum';
+
+@injectable()
 export class UserRouter {
-  public router: HttpRouter;
-  private userService: UserService;
-
   constructor(
-    private routerFactory: () => HttpRouter,
-    dataAccess: DataAccess,
+    @inject(DEP_ROUTING_ROUTER) public router: HttpRouter,
+    @inject(UserService) private userService: UserService,
   ) {
-    const router = this.routerFactory();
-    this.router = router;
-
-    this.userService = new UserService(dataAccess);
-
     router.handler('GET /', this.getAllUsersRouter.bind(this));
     router.handler('GET /:id', this.getUserByIdRouter.bind(this));
   }

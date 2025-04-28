@@ -1,10 +1,12 @@
+import { inject, injectable } from 'tsyringe';
+
 import { HttpRouter } from '@@app/ports';
 
-export class ChatRouter {
-  public router: HttpRouter;
+import { DEP_ROUTING_ROUTER } from '@@const/injection.enum';
 
-  constructor(private routerFactory: () => HttpRouter) {
-    const router = this.routerFactory();
+@injectable()
+export class ChatRouter {
+  constructor(@inject(DEP_ROUTING_ROUTER) public router: HttpRouter) {
     this.router = router;
   }
 }

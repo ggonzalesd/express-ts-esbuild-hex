@@ -1,3 +1,5 @@
+import { container } from 'tsyringe';
+
 import { createServer } from 'http';
 import { Server } from 'ws';
 
@@ -10,6 +12,8 @@ import {
   WsMessageCallback,
   WsRequest,
 } from '@@app/ports/WsService.port';
+
+import { DepWebsocket } from '@@const/dependencies.enum';
 
 export class WsAppAdapter<T = unknown> implements WsApplication {
   public readonly rooms: Map<string, Set<WsClient<T>>>;
@@ -200,3 +204,7 @@ export class WsAppAdapter<T = unknown> implements WsApplication {
     }
   }
 }
+
+container.register<WsApplication>(DepWebsocket.WS, {
+  useValue: new WsAppAdapter(),
+});

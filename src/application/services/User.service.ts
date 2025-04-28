@@ -1,9 +1,14 @@
+import { inject, injectable } from 'tsyringe';
+
 import { User } from '@@core/entities';
 import { DataAccess } from '@@core/repositories';
 import { CoreError } from '@@core/errors';
 
+import { DEP_DB } from '@@const/injection.enum';
+
+@injectable()
 export class UserService {
-  constructor(private dataAccess: DataAccess) {}
+  constructor(@inject(DEP_DB) private dataAccess: DataAccess) {}
 
   async getAllUsers(): Promise<User[]> {
     return await this.dataAccess.transaction(async () => {

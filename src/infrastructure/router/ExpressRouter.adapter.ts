@@ -1,3 +1,5 @@
+import { container, inject, injectable } from 'tsyringe';
+
 import express, {
   Router,
   type NextFunction,
@@ -15,10 +17,21 @@ import {
   type HttpRouter,
 } from '@@app/ports/HttpService.port';
 
+import { DepRoutingRouter } from '@@const/dependencies.enum';
+
+const expressRouterFactory = (): IRouter => {
+  return express.Router();
+};
+const DEP_EXPRESS_ROUTER_FACTORY = 'dep-express-router-factory';
+container.register<IRouter>(DEP_EXPRESS_ROUTER_FACTORY, {
+  useFactory: expressRouterFactory,
+});
+
+@injectable({ token: DepRoutingRouter.EXPRESS })
 export class ExpressRouterAdapter implements HttpRouter {
   public expressRouter: IRouter;
 
-  constructor(router?: IRouter | null) {
+  constructor(@inject(DEP_EXPRESS_ROUTER_FACTORY) router?: IRouter | null) {
     if (router == null) router = Router();
 
     this.expressRouter = router;
@@ -103,6 +116,3 @@ export class ExpressRouterAdapter implements HttpRouter {
     }
   };
 }
-
-export const expreeRouterFactory: () => HttpRouter = () =>
-  new ExpressRouterAdapter(express.Router());

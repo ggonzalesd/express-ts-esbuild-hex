@@ -22,6 +22,12 @@ export interface ConfigService {
   DB_DIALECT: 'postgres' | 'mysql' | 'sqlite';
   DB_CONNECTION_POOL_MAX: number;
 
+  SMTP_HOST: string;
+  SMTP_PORT: number;
+  SMTP_USER: string;
+  SMTP_PASS: string;
+  SMTP_SECURE: 'tls' | 'ssl' | 'false';
+
   MIGRATE_TEMPLATE: string;
   MIGRATE_FOLDER: string;
 

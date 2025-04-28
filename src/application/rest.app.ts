@@ -1,27 +1,29 @@
-import { DataAccess } from '@@core/repositories';
+import { inject, injectable } from 'tsyringe';
 
 import {
   HttpApplication,
   HttpErrorCallback,
   HttpRequest,
   HttpResponse,
-  HttpRouter,
-} from './ports/HttpService.port';
-import { EventPublisherService } from './ports/EventService.port';
+  EventPublisherService,
+} from './ports';
+
 import { UserRouter } from './route';
 
-export class RestApplicationService {
-  private userRouter: UserRouter;
+import {
+  DEP_ERROR_HANDLER,
+  DEP_EVENT_PUB,
+  DEP_ROUTING_APP,
+} from '@@const/injection.enum';
 
+@injectable()
+export class RestApplicationBootstrap {
   constructor(
-    public app: HttpApplication,
-    public routerFactory: () => HttpRouter,
-    public handlerFactory: () => HttpErrorCallback,
-    public publisher: EventPublisherService,
-    public dataAccess: DataAccess,
+    @inject(DEP_ROUTING_APP) public app: HttpApplication,
+    @inject(UserRouter) private userRouter: UserRouter,
+    @inject(DEP_ERROR_HANDLER) errorHandler: HttpErrorCallback,
+    @inject(DEP_EVENT_PUB) publisher: EventPublisherService,
   ) {
-    this.userRouter = new UserRouter(routerFactory, dataAccess);
-
     this.app.handler('GET /health', this.healthCheck.bind(this));
 
     this.app.handler('USE /api/v1/users', this.userRouter.router);
@@ -48,7 +50,7 @@ export class RestApplicationService {
 
     this.app.handler('USE', this.notFound.bind(this));
 
-    this.app.error(this.handlerFactory());
+    this.app.error(errorHandler);
   }
 
   private async notFound(req: HttpRequest, res: HttpResponse) {

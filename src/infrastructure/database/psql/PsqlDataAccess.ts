@@ -1,3 +1,8 @@
+import { inject, injectable } from 'tsyringe';
+
+import { DepDb } from '@@const/dependencies.enum';
+import { DEP_ENVIRONMENT } from '@@const/injection.enum';
+
 import { psqlPoolFactory } from './Psql.config';
 import { PsqlUserDB } from './PsqlUser.database';
 
@@ -11,12 +16,13 @@ import type {
 
 import { ConfigService } from '@@app/ports';
 
+@injectable({ token: DepDb.PSQL })
 export class PsqlDataAccess implements DataAccess {
   public pool: PoolClient;
 
   public user: UserRepository;
 
-  constructor(public configServier: ConfigService) {
+  constructor(@inject(DEP_ENVIRONMENT) public configServier: ConfigService) {
     this.pool = psqlPoolFactory(configServier);
 
     this.user = new PsqlUserDB(this.pool);

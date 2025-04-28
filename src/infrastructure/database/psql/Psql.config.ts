@@ -1,4 +1,7 @@
+import { container } from 'tsyringe';
 import { Pool as PgPool, PoolClient as PgPoolClient } from 'pg';
+
+import { DEP_ENVIRONMENT } from '@@const/injection.enum';
 
 import type {
   PoolClient,
@@ -46,3 +49,9 @@ export const psqlPoolFactory: (envConfig: ConfigService) => PoolClient = (
     },
   };
 };
+
+export const DEP_PSQL_POOL_FACTORY = 'dep-psql-pool-factory' as const;
+
+container.register<PoolClient>(DEP_PSQL_POOL_FACTORY, {
+  useValue: psqlPoolFactory(container.resolve<ConfigService>(DEP_ENVIRONMENT)),
+});
