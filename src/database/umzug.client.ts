@@ -1,3 +1,6 @@
+import 'reflect-metadata';
+import { container } from 'tsyringe';
+
 import path from 'node:path';
 import fs from 'node:fs';
 
@@ -9,9 +12,11 @@ import { PoolClient } from '@@core/repositories/DataAccess.port';
 
 import { type ConfigService } from '@@app/ports/ConfigService.port';
 
-import { dotenvConfigFactory } from '@@infra/environment/dotenv.config';
+import { DEP_ENVIRONMENT } from '@@const/injection.enum';
 
-const envConfig: ConfigService = dotenvConfigFactory();
+import '@@infra/environment/dotenv.config';
+
+const envConfig = container.resolve<ConfigService>(DEP_ENVIRONMENT);
 
 async function start() {
   // #region Get context from the container

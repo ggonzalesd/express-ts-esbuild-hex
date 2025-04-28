@@ -40,21 +40,27 @@ export class ExpressRouterAdapter implements HttpRouter {
   public static requestAdapter(req: Request): HttpRequest {
     return {
       method: req.method,
-      body: req.body,
+      getBody: () => req.body,
       headers: req.headers as Record<string, string>,
       params: req.params,
       path: req.path,
       query: req.query as Record<string, string | null | undefined>,
       cookies: req.cookies,
-      user: 'user' in req ? req.user : undefined,
+      getUser: () => ('user' in req ? req.user : undefined),
+      setUser: (user: unknown) => {
+        (req as unknown as { user: unknown }).user = user;
+      },
     };
   }
 
   public static responseAdapter(res: Response): HttpResponse {
-    return {
+    const response: HttpResponse = {
       json: (data: unknown) => res.json(data),
       send: (data: unknown) => res.send(data),
-      status: (statusCode: number) => res.status(statusCode),
+      status: (statusCode: number) => {
+        res.status(statusCode);
+        return response;
+      },
       redirect: (url: string) => res.redirect(url),
       setHeader: (name: string, value: string) => {
         res.setHeader(name, value);
@@ -67,6 +73,7 @@ export class ExpressRouterAdapter implements HttpRouter {
         }
       },
     };
+    return response;
   }
 
   private adapter(handler: HttpCallback | HttpRouter) {

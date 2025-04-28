@@ -28,9 +28,10 @@ export interface HttpRequest {
   params: Record<string, string | undefined>;
   query: Record<string, string | null | undefined>;
   headers: Record<string, string | undefined>;
-  cookies?: Record<string, string | undefined>;
-  body: unknown;
-  user?: unknown;
+  cookies: Record<string, string | undefined>;
+  getBody: () => unknown;
+  getUser: () => unknown;
+  setUser: (user: unknown) => void;
 }
 
 export interface HttpResponse {
@@ -39,11 +40,7 @@ export interface HttpResponse {
   send: (data: unknown) => void;
   redirect: (url: string) => void;
   setHeader: (name: string, value: string) => void;
-  setCookie?: (
-    name: string,
-    value: string,
-    options?: HttpCookieOptions,
-  ) => void;
+  setCookie: (name: string, value: string, options?: HttpCookieOptions) => void;
 }
 
 export type HttpNext = (err?: unknown) => void;

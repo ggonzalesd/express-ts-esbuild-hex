@@ -7,6 +7,7 @@ import { createServer } from 'node:http';
 import express, { Express, Request, Response, NextFunction } from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 import { type ConfigService } from '@@app/ports/ConfigService.port';
 import {
@@ -55,6 +56,7 @@ export class ExpressAppAdapter
     app.use(cors());
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
+    app.use(cookieParser());
 
     if (this.config.STATIC_DIR) {
       app.use(express.static(path.resolve(this.config.STATIC_DIR)));

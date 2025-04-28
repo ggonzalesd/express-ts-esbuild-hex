@@ -1,3 +1,33 @@
+@host=http://localhost:3000
+
 ### Send Message
 
 GET http://localhost:3000/api/v1/send/chat-room?message=What%20is%20the%20weather%20like%20today%3F&userId=1234&chatRoomId=5678
+
+### Create User
+POST {{host}}/api/v1/auth/register
+Content-Type: application/json
+
+{
+  "email": "gonzalesdlcgrober@gmail.com",
+  "password": "123ABCabc_",
+  "username": "gonzales"
+}
+
+### Login User
+POST {{host}}/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "gonzalesdlcgrober@gmail.com",
+  "password": "123ABCabc_"
+}
+
+### Profile
+GET {{host}}/api/v1/auth/profile
+Cookie: auth-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNmZTBiNDgxLTNlMmYtNDE2ZS1iODQ4LTFlZjY1Y2IwZjI2OSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzQ1ODcxMzUyLCJleHAiOjE3NDU4NzQ5NTJ9.de6qCTMFk1c2_mD-vKcfEO12D8PZUrQqBg7y4IDe5G4
+
+### GET Users
+GET {{host}}/api/v1/users
+Cookie: auth-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNmZTBiNDgxLTNlMmYtNDE2ZS1iODQ4LTFlZjY1Y2IwZjI2OSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzQ1ODcxMzUyLCJleHAiOjE3NDU4NzQ5NTJ9.de6qCTMFk1c2_mD-vKcfEO12D8PZUrQqBg7y4IDe5G4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNmZTBiNDgxLTNlMmYtNDE2ZS1iODQ4LTFlZjY1Y2IwZjI2OSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzQ1ODcwNDgzLCJleHAiOjE3NDU4NzQwODN9.HFn25vcLbHYu0eZIfQM_XCn5RY7b4_TE3ffRFecIsFE

@@ -30,7 +30,7 @@ export class PsqlUserDB implements UserRepository {
       id,
     );
 
-    return result[0] || null;
+    return result[0] ? new User(result[0]) : null;
   }
 
   async findByEmail(email: string, ctx?: PoolQuery): Promise<User | null> {
@@ -38,10 +38,24 @@ export class PsqlUserDB implements UserRepository {
 
     const result = await client.query<User>(
       'SELECT * FROM users WHERE email = $1',
-      [email],
+      email,
     );
 
-    return result[0] || null;
+    return result[0] ? new User(result[0]) : null;
+  }
+
+  async findByUsername(
+    username: string,
+    ctx?: PoolQuery,
+  ): Promise<User | null> {
+    const client = ctx ?? this.client;
+
+    const result = await client.query<User>(
+      'SELECT * FROM users WHERE username = $1',
+      username,
+    );
+
+    return result[0] ? new User(result[0]) : null;
   }
 
   async create(user: User, ctx?: PoolQuery): Promise<User | null> {
@@ -49,8 +63,8 @@ export class PsqlUserDB implements UserRepository {
 
     const result = await client.query<User>(
       `INSERT INTO users
-        (display, username, email, password, verified, role, state)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
+        (display, username, email, password, verified, role, state, verifyemailtoken)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
         RETURNING *`,
       user.display,
       user.username,
@@ -59,6 +73,36 @@ export class PsqlUserDB implements UserRepository {
       user.verified,
       user.role,
       user.state,
+      user.verifyemailtoken,
+    );
+
+    return result[0] ? new User(result[0]) : null;
+  }
+
+  async update(user: User, ctx?: PoolQuery): Promise<User | null> {
+    const client = ctx ?? this.client;
+
+    const result = await client.query<User>(
+      `UPDATE users
+        SET display = $1,
+            username = $2,
+            email = $3,
+            password = $4,
+            verified = $5,
+            role = $6,
+            state = $7,
+            verifyemailtoken = $8
+      WHERE id = $9
+        RETURNING *`,
+      user.display,
+      user.username,
+      user.email,
+      user.password,
+      user.verified,
+      user.role,
+      user.state,
+      user.verifyemailtoken,
+      user.id,
     );
 
     return result[0] || null;

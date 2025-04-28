@@ -1,17 +1,18 @@
 /* eslint-disable no-console */
+import { container } from 'tsyringe';
+
 import fs from 'node:fs';
 import { type UmzugStorage } from 'umzug';
 
 import { DataAccess, PoolClient } from '@@core/repositories/DataAccess.port';
 
-import { ConfigService } from '@@app/ports';
+import { DEP_DB } from '@@const/injection.enum';
 
-import { dotenvConfigFactory } from '@@infra/environment';
-import { PsqlDataAccess } from '@@infra/database/psql/PsqlDataAccess';
+import '@@infra/environment/dotenv.config';
+import '@@infra/database/psql/PsqlDataAccess';
 
 export const getContext = (): PoolClient => {
-  const configService: ConfigService = dotenvConfigFactory();
-  const dataAccess: DataAccess = new PsqlDataAccess(configService);
+  const dataAccess: DataAccess = container.resolve<DataAccess>(DEP_DB);
   const context = dataAccess.pool;
 
   return {
