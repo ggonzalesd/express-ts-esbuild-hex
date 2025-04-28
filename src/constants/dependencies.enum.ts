@@ -40,3 +40,8 @@ export enum DepWebsocket {
   WS = 'dep-websocket-ws',
   IO = 'dep-websocket-io',
 }
+
+export enum DepEmail {
+  MJML = 'dep-email-mjml',
+  RESEND = 'dep-email-resend',
+}

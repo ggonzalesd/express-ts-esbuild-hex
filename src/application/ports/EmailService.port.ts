@@ -12,10 +12,5 @@ export interface EmailService {
     subject: string,
     template: EmailServiceTemplates,
     data?: unknown | null,
-    attachments?: Array<{
-      filename: string;
-      content: string | Buffer;
-      contentType?: string;
-    }>,
   ): Promise<void>;
 }

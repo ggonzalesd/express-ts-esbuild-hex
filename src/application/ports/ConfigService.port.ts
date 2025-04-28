@@ -28,6 +28,9 @@ export interface ConfigService {
   SMTP_PASS: string;
   SMTP_SECURE: 'tls' | 'ssl' | 'false';
 
+  EMAIL_FROM: string;
+  EMAIL_FOLDER: string;
+
   MIGRATE_TEMPLATE: string;
   MIGRATE_FOLDER: string;
 

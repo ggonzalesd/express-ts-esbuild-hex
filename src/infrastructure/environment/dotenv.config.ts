@@ -64,6 +64,9 @@ const envSchema = z
     SMTP_PASS: z.string().default(''),
     SMTP_SECURE: z.enum(['tls', 'ssl', 'false']).default('false'),
 
+    EMAIL_FROM: z.string(),
+    EMAIL_FOLDER: z.string().default('emails'),
+
     MIGRATE_TEMPLATE: z.string().default('template.ts'),
     MIGRATE_FOLDER: z.string().default('migrations'),
 

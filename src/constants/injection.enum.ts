@@ -2,6 +2,7 @@ import {
   DepBarrier,
   DepCache,
   DepDb,
+  DepEmail,
   DepEnvironment,
   DepErrorHandler,
   DepEventPub,
@@ -27,3 +28,5 @@ export const DEP_CACHE = DepCache.REDIS as const;
 export const DEP_ERROR_HANDLER = DepErrorHandler.CUSTOM as const;
 
 export const DEP_WEBSOCKET = DepWebsocket.WS as const;
+
+export const DEP_EMAIL = DepEmail.MJML as const;
