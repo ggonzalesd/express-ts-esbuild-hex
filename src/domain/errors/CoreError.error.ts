@@ -13,6 +13,13 @@ export class CoreError extends Error {
     return new CoreError(message, code);
   }
 
+  static fakeSuccess(
+    message: string,
+    code: HttpCodes = HttpCodes.OK,
+  ): CoreError {
+    return new CoreError(message, code);
+  }
+
   static notFound(message: string): CoreError {
     return new CoreError(message, HttpCodes.NOT_FOUND);
   }
@@ -31,5 +38,9 @@ export class CoreError extends Error {
 
   static internalServerError(message: string): CoreError {
     return new CoreError(message, HttpCodes.INTERNAL_SERVER_ERROR);
+  }
+
+  static conflict(message: string): CoreError {
+    return new CoreError(message, HttpCodes.CONFLICT);
   }
 }

@@ -28,12 +28,26 @@ export class PsqlDataAccess implements DataAccess {
     this.user = new PsqlUserDB(this.pool);
   }
 
-  public async transaction<T>(fn: (ctx: PoolQuery) => Promise<T>): Promise<T> {
+  public async transaction<T>(
+    fn: (ctx: PoolQuery, access: DataAccess, cancel: () => void) => Promise<T>,
+  ): Promise<T> {
     let connection: PoolConnection | null = null;
+
+    let doRoolback = false;
+    const cancel = () => {
+      doRoolback = true;
+    };
+
     try {
       connection = await this.pool.connect();
       await connection.begin();
-      const result = await fn(connection);
+      const result = await fn(connection, this, cancel);
+
+      if (doRoolback) {
+        await connection?.rollback();
+        return result;
+      }
+
       await connection.commit();
       return result;
     } catch (error) {

@@ -20,5 +20,7 @@ export interface DataAccess {
 
   user: UserRepository;
 
-  transaction: <T>(fn: (ctx: PoolQuery) => Promise<T>) => Promise<T>;
+  transaction: <T>(
+    fn: (ctx: PoolQuery, access: DataAccess, cancel: () => void) => Promise<T>,
+  ) => Promise<T>;
 }

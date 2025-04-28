@@ -38,7 +38,21 @@ export class PsqlUserDB implements UserRepository {
 
     const result = await client.query<User>(
       'SELECT * FROM users WHERE email = $1',
-      [email],
+      email,
+    );
+
+    return result[0] || null;
+  }
+
+  async findByUsername(
+    username: string,
+    ctx?: PoolQuery,
+  ): Promise<User | null> {
+    const client = ctx ?? this.client;
+
+    const result = await client.query<User>(
+      'SELECT * FROM users WHERE username = $1',
+      username,
     );
 
     return result[0] || null;
