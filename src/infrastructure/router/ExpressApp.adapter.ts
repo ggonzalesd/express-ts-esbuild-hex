@@ -1,5 +1,6 @@
 import { container } from 'tsyringe';
 
+import path from 'node:path';
 import fs from 'node:fs';
 import { createServer } from 'node:http';
 
@@ -39,9 +40,12 @@ export class ExpressAppAdapter
     app.disable('x-powered-by');
 
     if (this.config.NODE_ENV === 'production') {
-      const accessLogStream = fs.createWriteStream(this.config.LOGGER_FILE, {
-        flags: 'a',
-      });
+      const accessLogStream = fs.createWriteStream(
+        path.resolve(this.config.LOGGER_FILE),
+        {
+          flags: 'a',
+        },
+      );
       app.use(morgan('combined'));
       app.use(morgan('combined', { stream: accessLogStream }));
     } else if (this.config.NODE_ENV === 'development') {
@@ -53,7 +57,7 @@ export class ExpressAppAdapter
     app.use(express.urlencoded({ extended: true }));
 
     if (this.config.STATIC_DIR) {
-      app.use(express.static(this.config.STATIC_DIR));
+      app.use(express.static(path.resolve(this.config.STATIC_DIR)));
     }
   }
 

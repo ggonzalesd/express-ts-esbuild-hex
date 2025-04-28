@@ -8,6 +8,7 @@ import '@@infra/barrier/CustomBarrier.adapter';
 
 import '@@infra/event/RedisEvent.adapter';
 import '@@infra/database/psql/PsqlDataAccess';
+import '@@infra/email/MjmlMail.adapter';
 
 import '@@infra/router/ExpressApp.adapter';
 import '@@infra/router/ExpressRouter.adapter';
